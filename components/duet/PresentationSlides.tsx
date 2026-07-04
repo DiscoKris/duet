@@ -765,11 +765,11 @@ export function PresentationSlides({ slug }: { slug: string }) {
             <div className="absolute inset-y-0 right-0 w-[18%] bg-[linear-gradient(90deg,rgba(0,0,0,0),rgba(0,0,0,0.92))]" />
             <div className="absolute inset-y-0 left-0 w-[10%] bg-[linear-gradient(90deg,rgba(0,0,0,0.9),rgba(0,0,0,0))]" />
           </div>
-          <div className="relative z-10 ml-auto w-full max-w-[42rem] py-24">
+          <div className="relative z-10 ml-auto w-full max-w-full overflow-visible py-24 pr-4 sm:pr-6 lg:max-w-[42rem] lg:pr-8">
             <SectionLabel accent="orange">Centerpiece</SectionLabel>
             <OversizedHeading
-              lines={["SHOW-STOPPING", "CENTERPIECE"]}
-              className="mt-5 text-[clamp(3.6rem,10.8vw,10.2rem)]"
+              lines={["SHOW-", "STOPPING", "CENTERPIECE"]}
+              className="mt-5 max-w-full overflow-visible whitespace-normal text-[clamp(4.5rem,8vw,8rem)]"
             />
             <p className="mt-6 font-display text-4xl uppercase leading-[0.94] tracking-[-0.04em] text-white">
               {formatCopy.centerpieceBody}
