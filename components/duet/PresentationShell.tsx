@@ -1,0 +1,252 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { findRouteByPath, presentationRoutes } from "@/data/presentationRoutes";
+import { PersistentPartnerBadge } from "./PersistentPartnerBadge";
+import { usePresentation } from "./PresentationContext";
+
+const hiddenGlobalNextRoutes = new Set([
+  "/",
+  "/proof",
+  "/centerpiece",
+  "/contestant",
+  "/spin",
+  "/partner",
+  "/phase-one",
+  "/phase-two",
+  "/phase-three",
+  "/opponent-spin",
+  "/duel",
+  "/final-spin",
+  "/final-four",
+  "/secret-superstar",
+  "/finale",
+]);
+
+const partnerBadgeRoutes = new Set([
+  "/partner",
+  "/phases",
+  "/phase-one",
+  "/phase-one-result",
+  "/phase-two",
+  "/opponent-spin",
+  "/duel",
+  "/duel-result",
+  "/phase-three",
+  "/final-spin",
+  "/final-four",
+  "/secret-superstar",
+  "/winner",
+]);
+
+export function PresentationShell({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const route = findRouteByPath(pathname);
+  const { selectedPartner, spinVideoPlayed, singerRevealed } = usePresentation();
+  const nextBlocked = hiddenGlobalNextRoutes.has(pathname);
+  const showPartnerBadge =
+    !!selectedPartner &&
+    ((pathname === "/spin" && spinVideoPlayed && singerRevealed) ||
+      partnerBadgeRoutes.has(pathname));
+
+  const prevRoute = useMemo(() => {
+    if (!route || route.index === 0) {
+      return null;
+    }
+
+    return presentationRoutes[route.index - 1];
+  }, [route]);
+
+  const nextRoute = useMemo(() => {
+    if (!route || route.index === presentationRoutes.length - 1) {
+      return null;
+    }
+
+    return presentationRoutes[route.index + 1];
+  }, [route]);
+
+  const navigate = useCallback(
+    (direction: "next" | "prev") => {
+      if (direction === "next" && nextBlocked) {
+        return;
+      }
+
+      const target = direction === "next" ? nextRoute : prevRoute;
+
+      if (!target) {
+        return;
+      }
+
+      router.push(target.path);
+    },
+    [nextBlocked, nextRoute, prevRoute, router],
+  );
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (menuOpen) {
+        return;
+      }
+
+      if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") {
+        return;
+      }
+
+      if (
+        event.target instanceof HTMLElement &&
+        ["BUTTON", "A", "INPUT", "TEXTAREA", "SELECT"].includes(event.target.tagName)
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      navigate(event.key === "ArrowRight" ? "next" : "prev");
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [menuOpen, navigate]);
+
+  useEffect(() => {
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    const onTouchStart = (event: TouchEvent) => {
+      touchStartX = event.changedTouches[0]?.screenX ?? 0;
+    };
+
+    const onTouchEnd = (event: TouchEvent) => {
+      if (menuOpen) {
+        return;
+      }
+
+      touchEndX = event.changedTouches[0]?.screenX ?? 0;
+      const delta = touchStartX - touchEndX;
+
+      if (Math.abs(delta) < 60) {
+        return;
+      }
+
+      navigate(delta > 0 ? "next" : "prev");
+    };
+
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [menuOpen, navigate]);
+
+  if (!route) {
+    return <>{children}</>;
+  }
+
+  const progress = ((route.index + 1) / presentationRoutes.length) * 100;
+
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-black text-white">
+      <button
+        type="button"
+        onClick={() => setMenuOpen((current) => !current)}
+        className="fixed right-4 top-4 z-50 rounded-full border border-white/15 bg-black/70 px-4 py-2 font-sans text-[11px] uppercase tracking-[0.3em] text-white backdrop-blur transition-colors hover:border-[var(--accent-pink)] hover:text-[var(--accent-pink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-pink)]"
+        aria-expanded={menuOpen}
+        aria-controls="presentation-menu"
+      >
+        Menu
+      </button>
+
+      {showPartnerBadge ? <PersistentPartnerBadge label={selectedPartner.shortName} /> : null}
+
+      {menuOpen ? (
+        <div
+          id="presentation-menu"
+          className="fixed inset-0 z-40 flex min-h-screen items-center justify-center bg-black/94 p-8"
+        >
+          <div className="w-full max-w-5xl">
+            <p className="font-sans text-xs uppercase tracking-[0.35em] text-white/45">
+              Presentation Map
+            </p>
+            <div className="mt-8 grid gap-3 md:grid-cols-2">
+              {presentationRoutes.map((menuRoute, index) => (
+                <Link
+                  key={menuRoute.path}
+                  href={menuRoute.path}
+                  onClick={() => setMenuOpen(false)}
+                  className={`group flex items-center justify-between border-b py-4 font-display text-4xl uppercase tracking-[-0.05em] transition-colors ${
+                    pathname === menuRoute.path
+                      ? "border-[var(--accent-pink)] text-[var(--accent-pink)]"
+                      : "border-white/10 text-white hover:text-[var(--accent-pink)]"
+                  }`}
+                >
+                  <span>
+                    {String(index + 1).padStart(2, "0")} {menuRoute.menuLabel}
+                  </span>
+                  <span className="transition-transform group-hover:translate-x-1">
+                    &rarr;
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      <div className="fixed left-4 top-4 z-30 hidden items-center gap-3 md:flex">
+        <p className="font-sans text-[11px] uppercase tracking-[0.3em] text-white/55">
+          {String(route.index + 1).padStart(2, "0")} / {String(presentationRoutes.length).padStart(2, "0")}
+        </p>
+        <div className="h-px w-32 bg-white/15">
+          <div
+            className="h-px bg-[var(--accent-pink)] transition-[width] duration-500"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
+
+      <div key={pathname} className="presentation-route-enter min-h-screen">
+        {children}
+      </div>
+
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex items-end justify-between px-4 pb-4 md:px-6 md:pb-6">
+        <div className="pointer-events-auto">
+          {prevRoute ? (
+            <Link
+              href={prevRoute.path}
+              className="group inline-flex items-center gap-3 rounded-full border border-white/15 bg-black/60 px-4 py-3 font-sans text-xs uppercase tracking-[0.28em] text-white/80 backdrop-blur transition-colors hover:border-white/35 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-pink)]"
+            >
+              <span className="text-lg transition-transform group-hover:-translate-x-1">
+                &larr;
+              </span>
+              <span>{route.previousLabel ?? "BACK"}</span>
+            </Link>
+          ) : (
+            <span />
+          )}
+        </div>
+        <div className="pointer-events-auto">
+          {nextRoute && !nextBlocked ? (
+            <Link
+              href={nextRoute.path}
+              className="group inline-flex items-center gap-3 rounded-full border border-[var(--accent-pink)]/30 bg-[var(--accent-pink)] px-5 py-3 font-sans text-xs font-semibold uppercase tracking-[0.28em] text-black transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            >
+              <span>{route.nextLabel ?? "CONTINUE"}</span>
+              <span className="text-lg transition-transform group-hover:translate-x-1">
+                &rarr;
+              </span>
+            </Link>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
