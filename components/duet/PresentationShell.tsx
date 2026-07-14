@@ -25,6 +25,11 @@ const hiddenGlobalNextRoutes = new Set([
   "/finale",
 ]);
 
+const alwaysLockedForwardRoutes = new Set([
+  "/proof",
+  "/secret-superstar",
+]);
+
 const partnerBadgeRoutes = new Set([
   "/partner",
   "/phases",
@@ -50,8 +55,22 @@ export function PresentationShell({
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const route = findRouteByPath(pathname);
-  const { selectedPartner, spinVideoPlayed, singerRevealed } = usePresentation();
-  const nextBlocked = hiddenGlobalNextRoutes.has(pathname);
+  const {
+    selectedPartner,
+    spinVideoPlayed,
+    singerRevealed,
+    opponentRevealed,
+    performanceStyle,
+    phaseOneAdvancingDuetIds,
+    finalistDuetIds,
+  } = usePresentation();
+  const keyboardForwardBlocked =
+    alwaysLockedForwardRoutes.has(pathname) ||
+    (pathname === "/spin" && !singerRevealed) ||
+    (pathname === "/phase-one" && phaseOneAdvancingDuetIds.length !== 4) ||
+    (pathname === "/opponent-spin" && !opponentRevealed) ||
+    (pathname === "/duel" && !performanceStyle) ||
+    (pathname === "/final-spin" && finalistDuetIds.length !== 4);
   const showPartnerBadge =
     !!selectedPartner &&
     ((pathname === "/spin" && spinVideoPlayed && singerRevealed) ||
@@ -75,7 +94,7 @@ export function PresentationShell({
 
   const navigate = useCallback(
     (direction: "next" | "prev") => {
-      if (direction === "next" && nextBlocked) {
+      if (direction === "next" && keyboardForwardBlocked) {
         return;
       }
 
@@ -87,7 +106,7 @@ export function PresentationShell({
 
       router.push(target.path);
     },
-    [nextBlocked, nextRoute, prevRoute, router],
+    [keyboardForwardBlocked, nextRoute, prevRoute, router],
   );
 
   useEffect(() => {
@@ -217,9 +236,9 @@ export function PresentationShell({
         {children}
       </div>
 
-      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex items-end justify-between px-4 pb-4 md:px-6 md:pb-6">
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex items-end justify-between px-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:px-6 md:pb-[max(1.5rem,env(safe-area-inset-bottom))]">
         <div className="pointer-events-auto">
-          {prevRoute ? (
+          {prevRoute && pathname !== "/problem" ? (
             <Link
               href={prevRoute.path}
               className="group inline-flex items-center gap-3 rounded-full border border-white/15 bg-black/60 px-4 py-3 font-sans text-xs uppercase tracking-[0.28em] text-white/80 backdrop-blur transition-colors hover:border-white/35 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-pink)]"
@@ -233,8 +252,8 @@ export function PresentationShell({
             <span />
           )}
         </div>
-        <div className="pointer-events-auto">
-          {nextRoute && !nextBlocked ? (
+        <div className={`pointer-events-auto ${showPartnerBadge ? "mb-12" : ""}`}>
+          {nextRoute && !hiddenGlobalNextRoutes.has(pathname) ? (
             <Link
               href={nextRoute.path}
               className="group inline-flex items-center gap-3 rounded-full border border-[var(--accent-pink)]/30 bg-[var(--accent-pink)] px-5 py-3 font-sans text-xs font-semibold uppercase tracking-[0.28em] text-black transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"

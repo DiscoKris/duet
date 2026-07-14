@@ -40,6 +40,11 @@ type FinalEpisodeDuet = {
 
 const finalRoundPartnerName = "STING";
 const finalEpisodeViewerDuetId = "you-sting";
+const proofButtonLabels = [
+  "I’M INTERESTED. TELL ME MORE",
+  "KEEP GOING",
+  "WHAT’S NEXT?",
+];
 const finalEpisodeDuets: FinalEpisodeDuet[] = [
   { id: finalEpisodeViewerDuetId, label: "YOU + STING", accent: "var(--accent-pink)" },
   { id: "alex-alicia", label: "ALEX + ALICIA", accent: "var(--accent-cyan)" },
@@ -242,6 +247,45 @@ export function PresentationSlides({ slug }: { slug: string }) {
 
     router.replace("/partner");
   }, [router, slug]);
+
+  useEffect(() => {
+    if (slug !== "proof" && slug !== "secret-superstar") {
+      return;
+    }
+
+    const handleLocalForwardNavigation = (event: KeyboardEvent) => {
+      if (
+        event.key !== "ArrowRight" ||
+        document.getElementById("presentation-menu") ||
+        (event.target instanceof HTMLElement &&
+          ["BUTTON", "A", "INPUT", "TEXTAREA", "SELECT"].includes(event.target.tagName))
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+
+      if (slug === "proof") {
+        if (proofIndex === powerPanels.length - 1) {
+          router.push("/problem");
+          return;
+        }
+
+        setProofIndex((current) => current + 1);
+        return;
+      }
+
+      if (superstarVisible) {
+        router.push("/winner");
+        return;
+      }
+
+      setSuperstarVisible(true);
+    };
+
+    window.addEventListener("keydown", handleLocalForwardNavigation);
+    return () => window.removeEventListener("keydown", handleLocalForwardNavigation);
+  }, [proofIndex, router, slug, superstarVisible]);
 
   useEffect(() => {
     if (slug !== "spin") {
@@ -581,10 +625,19 @@ export function PresentationSlides({ slug }: { slug: string }) {
         className="justify-center py-[clamp(5rem,10vh,8.75rem)]"
         scrollable
       >
-        <div className="grid min-h-[100svh] flex-1 items-center gap-8 md:gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.8fr)] lg:gap-[clamp(3rem,8vw,8.75rem)]">
+        <div className="grid flex-1 items-center gap-8 md:gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.8fr)] lg:gap-[clamp(3rem,8vw,8.75rem)]">
           <div className="lg:max-w-[44rem]">
+            {proofIndex === 0 ? (
+              <h1 className="mb-8 font-display text-[clamp(1.9rem,3.25vw,2.45rem)] font-bold uppercase leading-none tracking-[-0.02em] text-white">
+                Why Now
+              </h1>
+            ) : null}
             <SectionLabel accent="cyan">The Power Of The Duet</SectionLabel>
-            <OversizedHeading lines={[currentPowerPanel.title]} accent="pink" className="mt-5" />
+            <OversizedHeading
+              lines={[currentPowerPanel.title]}
+              accent="pink"
+              className="mt-5 !text-[clamp(4.2rem,10vw,9rem)]"
+            />
             <p className="mt-4 font-sans text-sm uppercase tracking-[0.22em] text-white/60">
               {currentPowerPanel.subtitle}
             </p>
@@ -603,7 +656,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
               }}
               className="mt-10 inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/5 px-5 py-3 font-sans text-sm uppercase tracking-[0.24em] text-white transition-colors hover:border-[var(--accent-pink)] hover:text-[var(--accent-pink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-pink)]"
             >
-              {isLastProofPanel ? "CONTINUE" : "NEXT EXAMPLE"}
+              {proofButtonLabels[proofIndex]}
               <span>&rarr;</span>
             </button>
           </div>
@@ -656,14 +709,9 @@ export function PresentationSlides({ slug }: { slug: string }) {
                 </p>
               ))}
             </div>
-            <div className="mt-8 inline-flex items-center gap-3 self-start">
-              <p className="font-sans text-sm font-semibold uppercase tracking-[0.28em] text-white drop-shadow-[0_0_14px_rgba(255,255,255,0.16)]">
-                {formatCopy.problemNote}
-              </p>
-              <span aria-hidden="true" className="text-sm text-white/90">
-                &rarr;
-              </span>
-            </div>
+            <p className="mt-8 self-start pb-[env(safe-area-inset-bottom)] font-sans text-sm font-semibold uppercase tracking-[0.28em] text-white drop-shadow-[0_0_14px_rgba(255,255,255,0.16)]">
+              {formatCopy.problemNote}
+            </p>
           </div>
           <div className="flex items-center justify-center lg:justify-end">
             <div className="relative w-full max-w-[34rem] overflow-hidden rounded-[2rem] border border-black/15 bg-black/12 shadow-[0_24px_60px_rgba(44,0,28,0.28)]">
@@ -766,7 +814,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
             <div className="absolute inset-y-0 left-0 w-[10%] bg-[linear-gradient(90deg,rgba(0,0,0,0.9),rgba(0,0,0,0))]" />
           </div>
           <div className="relative z-10 ml-auto w-full max-w-full overflow-visible py-24 pr-4 sm:pr-6 lg:max-w-[42rem] lg:pr-8">
-            <SectionLabel accent="orange">Centerpiece</SectionLabel>
+            <SectionLabel accent="orange">Center Stage</SectionLabel>
             <OversizedHeading
               lines={["SHOW-", "STOPPING", "CENTERPIECE"]}
               className="mt-5 max-w-full overflow-visible whitespace-normal text-[clamp(4.5rem,8vw,8rem)]"
@@ -901,7 +949,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
                   Live Roulette
                 </p>
                 <p className="mt-4 font-sans text-base leading-7 text-white/72">
-                  Press the wheel to play the real roulette video, wait for the clue, then reveal the singer.
+                  Spin the roulette wheel to reveal your partner &amp; mentor.
                 </p>
                 <ArrowButton
                   onClick={startCelebritySpin}
@@ -991,7 +1039,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
               </p>
             </div>
             <ArrowButton onClick={() => router.push("/phases")} className="mt-7">
-              VIEW THE 3 PHASES
+              THE COMPETITION
             </ArrowButton>
           </div>
         </div>

@@ -28,7 +28,7 @@ export const presentationRoutes: PresentationRoute[] = [
     slug: "problem",
     menuLabel: "Problem",
     progressLabel: "The Secret Superstar Problem",
-    nextLabel: "WATCH THE SIZZLE",
+    nextLabel: "WATCH THIS",
   },
   {
     path: "/promise",

@@ -293,7 +293,7 @@ export const formatCopy = {
     "SOMEONE TO SING IT",
     "WITH HER.",
   ],
-  problemNote: "BTW: WHO IS SHE?",
+  problemNote: "(BTW: WHO IS SHE?)",
   promiseWords: [
     "UNPREDICTABLE.",
     "EMOTIONAL.",
