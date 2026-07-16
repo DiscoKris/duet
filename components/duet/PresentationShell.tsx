@@ -25,8 +25,6 @@ const hiddenGlobalNextRoutes = new Set([
   "/finale",
 ]);
 
-const hiddenGlobalBackRoutes = new Set(["/problem", "/contestant"]);
-
 const alwaysLockedForwardRoutes = new Set([
   "/proof",
   "/secret-superstar",
@@ -238,22 +236,7 @@ export function PresentationShell({
         {children}
       </div>
 
-      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex items-end justify-between px-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:px-6 md:pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-        <div className="pointer-events-auto">
-          {prevRoute && !hiddenGlobalBackRoutes.has(pathname) ? (
-            <Link
-              href={prevRoute.path}
-              className="group inline-flex items-center gap-3 rounded-full border border-white/15 bg-black/60 px-4 py-3 font-sans text-xs uppercase tracking-[0.28em] text-white/80 backdrop-blur transition-colors hover:border-white/35 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-pink)]"
-            >
-              <span className="text-lg transition-transform group-hover:-translate-x-1">
-                &larr;
-              </span>
-              <span>{route.previousLabel ?? "BACK"}</span>
-            </Link>
-          ) : (
-            <span />
-          )}
-        </div>
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex items-end justify-end px-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:px-6 md:pb-[max(1.5rem,env(safe-area-inset-bottom))]">
         <div className={`pointer-events-auto ${showPartnerBadge ? "mb-12" : ""}`}>
           {nextRoute && !hiddenGlobalNextRoutes.has(pathname) ? (
             <Link

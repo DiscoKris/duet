@@ -168,7 +168,7 @@ export const presentationRoutes: PresentationRoute[] = [
     slug: "creators",
     menuLabel: "Creators",
     progressLabel: "Created By",
-    nextLabel: "THANK YOU",
+    nextLabel: "IT’S ALMOST OVER",
   },
   {
     path: "/thank-you",

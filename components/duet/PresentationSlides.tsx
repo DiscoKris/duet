@@ -1436,11 +1436,11 @@ export function PresentationSlides({ slug }: { slug: string }) {
           </p>
           <div className="mt-8 space-y-2">
             {[
-              "8 PERFORMERS REMAIN.",
+              "8 CONTESTANTS REMAIN.",
               "EACH PERFORMER SPINS",
               "FOR A NEW CELEBRITY PARTNER.",
               "ALL 8 DUETS PERFORM.",
-              "THE TOP 4 ADVANCE",
+              "ONLY THE TOP 4 ADVANCE",
               "TO THE FINAL.",
             ].map((line) => (
               <p
@@ -1756,7 +1756,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
       <PresentationPage className="justify-start">
         <div className="flex min-h-full flex-col pt-[3.75rem]">
           <div className="max-w-3xl">
-            <SectionLabel accent="lime">{formatCopy.host.title}</SectionLabel>
+            <SectionLabel accent="lime">WHO’S GOT</SectionLabel>
             <p className="mt-5 font-display text-[clamp(3.5rem,8vw,8rem)] uppercase leading-[0.84] tracking-[-0.06em] text-[var(--accent-pink)]">
               HOST VIBES
             </p>
@@ -1764,7 +1764,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
               {formatCopy.host.body}
             </p>
           </div>
-          <div className="mt-10 grid gap-4 lg:mt-[4.5rem] lg:grid-cols-3">
+          <div className="mt-[4.5rem] grid gap-4 lg:mt-[6.5rem] lg:grid-cols-3">
             {hostReferences.map((reference) => (
               <article
                 key={reference.name}
@@ -1877,6 +1877,9 @@ export function PresentationSlides({ slug }: { slug: string }) {
               <span className="block">THANK</span>
               <span className="block">YOU</span>
             </h1>
+            <p className="mt-8 whitespace-nowrap font-display text-[clamp(1.6rem,7vw,6rem)] uppercase leading-none tracking-[-0.04em] text-white">
+              FOR SHARING THE SPOTLIGHT
+            </p>
           </div>
           <div className="mt-8">
             <button
