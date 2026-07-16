@@ -17,7 +17,7 @@ export function OversizedHeading({
 }: OversizedHeadingProps) {
   return (
     <h2
-      className={`font-display text-[clamp(4.2rem,13vw,12rem)] uppercase leading-[0.82] tracking-[-0.06em] ${accentClassMap[accent]} ${className}`}
+      className={`font-display text-[clamp(3.6rem,min(11vw,15svh),10rem)] uppercase leading-[0.82] tracking-[-0.06em] ${accentClassMap[accent]} ${className}`}
     >
       {lines.map((line) => (
         <span key={line} className="block">

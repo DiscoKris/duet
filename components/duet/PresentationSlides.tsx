@@ -622,10 +622,10 @@ export function PresentationSlides({ slug }: { slug: string }) {
   if (slug === "proof") {
     return (
       <PresentationPage
-        className="justify-center py-[clamp(5rem,10vh,8.75rem)]"
+        className="justify-center"
         scrollable
       >
-        <div className="grid flex-1 items-center gap-8 md:gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.8fr)] lg:gap-[clamp(3rem,8vw,8.75rem)]">
+        <div className="grid flex-1 items-center gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.72fr)] lg:gap-[clamp(2rem,5vw,5rem)]">
           <div className="lg:max-w-[44rem]">
             {proofIndex === 0 ? (
               <h1 className="mb-8 font-display text-[clamp(1.9rem,3.25vw,2.45rem)] font-bold uppercase leading-none tracking-[-0.02em] text-white">
@@ -636,12 +636,12 @@ export function PresentationSlides({ slug }: { slug: string }) {
             <OversizedHeading
               lines={[currentPowerPanel.title]}
               accent="pink"
-              className="mt-5 !text-[clamp(4.2rem,10vw,9rem)]"
+              className="mt-4 !text-[clamp(3.6rem,min(8vw,13svh),7.5rem)]"
             />
             <p className="mt-4 font-sans text-sm uppercase tracking-[0.22em] text-white/60">
               {currentPowerPanel.subtitle}
             </p>
-            <p className="mt-7 max-w-[34rem] font-sans text-[clamp(1.9rem,3.25vw,2.45rem)] uppercase leading-[1.18] text-white text-pretty">
+            <p className="mt-5 max-w-[34rem] font-sans text-[clamp(1.45rem,min(2.5vw,4.5svh),2.2rem)] uppercase leading-[1.15] text-white text-pretty">
               {currentPowerPanel.body}
             </p>
             <button
@@ -654,7 +654,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
 
                 setProofIndex((current) => current + 1);
               }}
-              className="mt-10 inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/5 px-5 py-3 font-sans text-sm uppercase tracking-[0.24em] text-white transition-colors hover:border-[var(--accent-pink)] hover:text-[var(--accent-pink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-pink)]"
+              className="mt-7 inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/5 px-5 py-3 font-sans text-sm uppercase tracking-[0.24em] text-white transition-colors hover:border-[var(--accent-pink)] hover:text-[var(--accent-pink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-pink)]"
             >
               {proofButtonLabels[proofIndex]}
               <span>&rarr;</span>
@@ -677,7 +677,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
                       height={758}
                       priority
                       sizes="(max-width: 768px) 86vw, (max-width: 1024px) 60vw, 34rem"
-                      className="h-auto max-h-[min(58vh,560px)] w-full max-w-full object-contain drop-shadow-[0_20px_28px_rgba(0,0,0,0.38)] md:max-h-[min(64vh,620px)] lg:max-h-[min(68vh,680px)]"
+                      className="h-auto max-h-[min(52svh,29rem)] w-full max-w-full object-contain drop-shadow-[0_20px_28px_rgba(0,0,0,0.38)]"
                       style={{ objectPosition: currentPowerPanel.imagePosition }}
                     />
                   </div>
@@ -697,19 +697,19 @@ export function PresentationSlides({ slug }: { slug: string }) {
         <div className="grid flex-1 gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-12">
           <div className="text-black">
             <SectionLabel accent="black">Problem</SectionLabel>
-            <OversizedHeading lines={["PROBLEM:"]} accent="black" className="mt-5" />
-            <div className="mt-8 space-y-3">
+            <OversizedHeading lines={["PROBLEM:"]} accent="black" className="mt-3 !text-[clamp(3.5rem,min(9vw,11svh),7rem)]" />
+            <div className="mt-5 space-y-2">
               {formatCopy.problemLines.map((line, index) => (
                 <p
                   key={line}
-                  className="sequence-reveal font-display text-[clamp(2rem,5vw,4.7rem)] uppercase leading-[0.92] tracking-[-0.05em]"
+                  className="sequence-reveal font-display text-[clamp(1.75rem,min(4vw,6svh),3.8rem)] uppercase leading-[0.92] tracking-[-0.05em]"
                   style={{ animationDelay: `${index * 80}ms` }}
                 >
                   {line}
                 </p>
               ))}
             </div>
-            <p className="mt-8 self-start pb-[env(safe-area-inset-bottom)] font-sans text-sm font-semibold uppercase tracking-[0.28em] text-white drop-shadow-[0_0_14px_rgba(255,255,255,0.16)]">
+            <p className="mt-5 self-start font-sans text-sm font-semibold uppercase tracking-[0.28em] text-white drop-shadow-[0_0_14px_rgba(255,255,255,0.16)]">
               {formatCopy.problemNote}
             </p>
           </div>
@@ -722,7 +722,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
                 width={621}
                 height={713}
                 sizes="(max-width: 1024px) 92vw, 45vw"
-                className="h-[58vh] w-full object-cover object-center sm:h-[62vh] lg:h-[70vh]"
+                className="h-[min(54svh,30rem)] w-full object-cover object-center"
               />
               <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(96,8,74,0.08),rgba(18,0,13,0.18))]" />
             </div>
@@ -753,18 +753,18 @@ export function PresentationSlides({ slug }: { slug: string }) {
   if (slug === "logline") {
     return (
       <PresentationPage
-        className="justify-center py-[clamp(4.5rem,8vh,7rem)]"
+        className="justify-center"
         scrollable
       >
-        <div className="relative flex min-h-[100svh] flex-1 flex-col overflow-visible">
+        <div className="relative flex min-h-0 flex-1 flex-col justify-center overflow-hidden">
           <div className="pointer-events-none absolute inset-x-0 top-[8%] hidden h-[28vh] bg-[radial-gradient(circle_at_18%_42%,rgba(255,52,145,0.16),transparent_42%)] lg:block" />
           <div className="relative z-10">
-            <h1 className="title-drift font-display text-[clamp(4.2rem,14vw,12rem)] uppercase leading-[0.76] tracking-[-0.08em] text-[var(--accent-pink)]">
+            <h1 className="title-drift font-display text-[clamp(3.8rem,min(11vw,14svh),10rem)] uppercase leading-[0.76] tracking-[-0.08em] text-[var(--accent-pink)]">
               <span className="block">DUET</span>
               <span className="block">ROULETTE</span>
             </h1>
           </div>
-          <div className="relative z-10 mt-8 flex flex-1 flex-col gap-8 pb-24 md:mt-10 lg:mt-10">
+          <div className="relative z-10 mt-[clamp(1rem,3svh,2rem)] flex flex-col gap-[clamp(1rem,2.5svh,1.75rem)]">
             <div className="max-w-[58rem]">
               <p className="font-display text-[clamp(1rem,1.55vw,1.35rem)] font-bold uppercase tracking-[0.28em] text-[var(--accent-orange)]">
                 LOGLINE
@@ -776,7 +776,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
               </div>
             </div>
             <div className="max-w-[58rem] pt-1 lg:-ml-3">
-              <div className="relative h-[22vh] w-full max-w-[min(85vw,72rem)] overflow-hidden rounded-[1.6rem] border border-white/10 bg-black shadow-[0_0_60px_rgba(255,52,145,0.16),0_24px_70px_rgba(0,0,0,0.5)] sm:h-[24vh] lg:h-[28vh]">
+              <div className="relative h-[min(24svh,13rem)] w-full max-w-[min(85vw,58rem)] overflow-hidden rounded-[1.6rem] border border-white/10 bg-black shadow-[0_0_60px_rgba(255,52,145,0.16),0_24px_70px_rgba(0,0,0,0.5)]">
                 <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,127,42,0.06),transparent_34%,rgba(255,52,145,0.1)_100%)]" />
                 <Image
                   src="/twowithmic.png"
@@ -798,7 +798,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
   if (slug === "centerpiece") {
     return (
       <PresentationPage className="justify-center" scrollable>
-        <div className="relative flex min-h-[100svh] flex-1 items-center overflow-visible">
+        <div className="relative flex min-h-0 flex-1 items-center overflow-hidden">
           <div className="pointer-events-none absolute inset-y-[8%] left-[-8%] right-[28%] overflow-hidden md:right-[34%] lg:right-[38%]">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(255,52,145,0.18),transparent_34%)] blur-2xl" />
             <Image
@@ -813,19 +813,19 @@ export function PresentationSlides({ slug }: { slug: string }) {
             <div className="absolute inset-y-0 right-0 w-[18%] bg-[linear-gradient(90deg,rgba(0,0,0,0),rgba(0,0,0,0.92))]" />
             <div className="absolute inset-y-0 left-0 w-[10%] bg-[linear-gradient(90deg,rgba(0,0,0,0.9),rgba(0,0,0,0))]" />
           </div>
-          <div className="relative z-10 ml-auto w-full max-w-full overflow-visible py-24 pr-4 sm:pr-6 lg:max-w-[42rem] lg:pr-8">
+          <div className="relative z-10 ml-auto w-full max-w-full overflow-visible py-[clamp(1rem,4svh,3rem)] pr-4 sm:pr-6 lg:max-w-[42rem] lg:pr-8">
             <SectionLabel accent="orange">Center Stage</SectionLabel>
             <OversizedHeading
               lines={["SHOW-", "STOPPING", "CENTERPIECE"]}
-              className="mt-5 max-w-full overflow-visible whitespace-normal text-[clamp(4.5rem,8vw,8rem)]"
+              className="mt-4 max-w-full overflow-visible whitespace-normal !text-[clamp(3.6rem,min(7vw,12svh),7rem)]"
             />
-            <p className="mt-6 font-display text-4xl uppercase leading-[0.94] tracking-[-0.04em] text-white">
+            <p className="mt-5 font-display text-[clamp(1.75rem,3vw,2.25rem)] uppercase leading-[0.94] tracking-[-0.04em] text-white">
               {formatCopy.centerpieceBody}
             </p>
-            <p className="mt-8 max-w-lg font-display text-3xl uppercase leading-[0.96] tracking-[-0.04em] text-[var(--accent-pink)]">
+            <p className="mt-5 max-w-lg font-display text-[clamp(1.5rem,2.5vw,1.9rem)] uppercase leading-[0.96] tracking-[-0.04em] text-[var(--accent-pink)]">
               {formatCopy.centerpiecePrompt}
             </p>
-            <ArrowButton onClick={() => router.push("/contestant")} className="mt-8">
+            <ArrowButton onClick={() => router.push("/contestant")} className="mt-6">
               STEP INTO THE COMPETITION
             </ArrowButton>
           </div>
@@ -837,16 +837,16 @@ export function PresentationSlides({ slug }: { slug: string }) {
   if (slug === "contestant") {
     return (
       <PresentationPage className="justify-center">
-        <div className="max-w-5xl -translate-y-4">
+        <div className="max-w-5xl">
           <SectionLabel accent="cyan">{formatCopy.contestant.eyebrow}</SectionLabel>
           <OversizedHeading
             lines={["YOU ARE ONE", "OF THE", "CONTESTANTS"]}
-            className="mt-5 !text-[clamp(4.2rem,min(13vw,19vh),12rem)]"
+            className="mt-4 !text-[clamp(3.7rem,min(11vw,15svh),9rem)]"
           />
-          <p className="mt-6 max-w-2xl font-sans text-xl leading-8 text-white">
+          <p className="mt-5 max-w-2xl font-sans text-[clamp(1rem,2.2svh,1.25rem)] leading-[1.55] text-white">
             Congratulations. You’ve made it through our audition process and you’re one of our contestants. You obviously have the voice, but now chance decides your partner.
           </p>
-          <ArrowButton onClick={() => router.push("/spin")} className="mt-8">
+          <ArrowButton onClick={() => router.push("/spin")} className="mt-6">
             SPIN THE WHEEL
           </ArrowButton>
         </div>
@@ -856,11 +856,11 @@ export function PresentationSlides({ slug }: { slug: string }) {
 
   if (slug === "spin") {
     return (
-      <PresentationPage className="justify-center py-12" scrollable>
-        <div className="grid min-h-[100svh] flex-1 gap-6 lg:grid-rows-[auto_1fr]">
+      <PresentationPage className="justify-center" scrollable>
+        <div className="grid min-h-0 flex-1 gap-[clamp(1rem,2.5svh,1.5rem)] lg:grid-rows-[auto_1fr]">
           <div>
             <SectionLabel>Celebrity Roulette</SectionLabel>
-            <OversizedHeading lines={["SPIN", "FOR YOUR STAR"]} className="mt-5" />
+            <OversizedHeading lines={["SPIN", "FOR YOUR STAR"]} className="mt-3 !text-[clamp(3.2rem,min(8vw,10svh),7rem)]" />
           </div>
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(300px,0.8fr)] lg:items-center">
             <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-black shadow-[0_26px_80px_rgba(0,0,0,0.55)]">
@@ -871,7 +871,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
                 playsInline
                 autoPlay={false}
                 controls={false}
-                className="aspect-video w-full object-cover"
+                className="h-[min(36svh,22rem)] w-full object-cover"
                 onEnded={handleCelebritySpinEnded}
                 onPlay={() => {
                   setIsSpinPlaying(true);
@@ -1009,7 +1009,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
                 height={1200}
                 priority
                 sizes="(max-width: 1024px) 92vw, 42vw"
-                className="h-[58vh] w-full object-contain sm:h-[62vh] lg:h-[68vh]"
+                className="h-[min(56svh,31rem)] w-full object-contain"
               />
             </div>
           </div>
@@ -1017,31 +1017,31 @@ export function PresentationSlides({ slug }: { slug: string }) {
             <p className="font-sans text-xs uppercase tracking-[0.35em] text-white/55">
               {formatCopy.roulette.intro}
             </p>
-            <p className="mt-4 font-display text-[clamp(4rem,9vw,7rem)] uppercase leading-[0.84] tracking-[-0.06em] text-[var(--accent-pink)]">
+            <p className="mt-3 font-display text-[clamp(3.4rem,min(8vw,11svh),6.5rem)] uppercase leading-[0.84] tracking-[-0.06em] text-[var(--accent-pink)]">
               {resolvedSelectedPartner.name}
             </p>
             <p className="mt-4 font-sans text-sm uppercase tracking-[0.28em] text-white/72">
               {resolvedSelectedPartner.descriptor}
             </p>
-            <div className="mt-10 rounded-[2rem] border border-[var(--accent-pink)]/25 bg-[var(--accent-pink)]/10 p-6">
+            <div className="mt-5 rounded-[1.5rem] border border-[var(--accent-pink)]/25 bg-[var(--accent-pink)]/10 p-4">
               <p className="font-sans text-xs uppercase tracking-[0.35em] text-white/55">
                 Selected Pairing
               </p>
-              <p className="mt-4 font-display text-[clamp(3.6rem,8vw,6rem)] uppercase leading-none tracking-[-0.06em] text-[var(--accent-pink)]">
+              <p className="mt-3 font-display text-[clamp(2.8rem,min(6vw,8svh),5rem)] uppercase leading-none tracking-[-0.06em] text-[var(--accent-pink)]">
                 {`YOU + ${resolvedSelectedPartner.firstName}`}
               </p>
             </div>
-            <div className="mt-7 rounded-[2rem] border border-white/10 bg-white/5 p-6">
-              <p className="font-display text-[clamp(2.4rem,5vw,4.5rem)] uppercase leading-[0.88] tracking-[-0.05em] text-white">
+            <div className="mt-4 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
+              <p className="font-display text-[clamp(2rem,min(4vw,6svh),3.5rem)] uppercase leading-[0.88] tracking-[-0.05em] text-white">
                 YOU&apos;VE MET THE STAR.
                 <br />
                 NOW FIND THE CHEMISTRY.
               </p>
-              <p className="mt-4 max-w-2xl font-sans text-base leading-7 text-white/74">
+              <p className="mt-3 max-w-2xl font-sans text-sm leading-6 text-white/74">
                 {formatCopy.partnership.body}
               </p>
             </div>
-            <ArrowButton onClick={() => router.push("/phases")} className="mt-7">
+            <ArrowButton onClick={() => router.push("/phases")} className="mt-4">
               THE COMPETITION
             </ArrowButton>
           </div>
@@ -1057,24 +1057,24 @@ export function PresentationSlides({ slug }: { slug: string }) {
   if (slug === "phases") {
     return (
       <PresentationPage className="justify-center">
-        <div className="grid flex-1 gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
+        <div className="grid flex-1 gap-6 lg:grid-cols-[0.72fr_1.28fr] lg:items-center">
           <div>
             <SectionLabel accent="purple">Three Phases</SectionLabel>
             <OversizedHeading lines={["FORMAT", "ARC"]} className="mt-5" />
           </div>
-          <div className="grid gap-4">
+          <div className="grid gap-[clamp(0.6rem,1.5svh,1rem)]">
             {phaseDescriptions.map((phase) => (
               <article
                 key={phase.number}
-                className="rounded-[2rem] border border-white/10 bg-white/5 p-5"
+                className="rounded-[1.5rem] border border-white/10 bg-white/5 p-[clamp(0.75rem,1.8svh,1.25rem)]"
               >
-                <p className="font-display text-[5rem] leading-none tracking-[-0.06em] text-white/18">
+                <p className="font-display text-[clamp(3rem,8svh,5rem)] leading-[0.8] tracking-[-0.06em] text-white/18">
                   {phase.number}
                 </p>
-                <p className="mt-2 font-display text-4xl uppercase leading-none tracking-[-0.05em] text-white">
+                <p className="mt-2 font-display text-[clamp(1.7rem,4svh,2.25rem)] uppercase leading-none tracking-[-0.05em] text-white">
                   {phase.title}
                 </p>
-                <p className="mt-3 font-sans text-sm text-white/68">{phase.description}</p>
+                <p className="mt-2 font-sans text-sm text-white/68">{phase.description}</p>
               </article>
             ))}
           </div>
@@ -1089,30 +1089,30 @@ export function PresentationSlides({ slug }: { slug: string }) {
         <div className="grid flex-1 gap-6 lg:grid-cols-[minmax(0,0.74fr)_minmax(0,1.26fr)] lg:items-center lg:gap-8">
           <div className="max-w-[31rem]">
             <SectionLabel accent="pink">01</SectionLabel>
-            <h1 className="mt-4 font-display text-[clamp(3.9rem,7vw,6.4rem)] uppercase leading-[0.84] tracking-[-0.07em] text-[var(--accent-pink)]">
+            <h1 className="mt-2 font-display text-[clamp(3.1rem,min(6vw,8svh),5.5rem)] uppercase leading-[0.84] tracking-[-0.07em] text-[var(--accent-pink)]">
               PHASE 1
             </h1>
-            <div className="mt-4">
+            <div className="mt-2">
               <SectionLabel accent="orange">
                 <span className="text-[0.98rem] font-semibold tracking-[0.28em]">
                   SPIN FOR PAIRS, SING AS PAIRS
                 </span>
               </SectionLabel>
             </div>
-            <p className="mt-4 font-sans text-sm uppercase tracking-[0.22em] text-white/64">
+            <p className="mt-2 font-sans text-xs uppercase tracking-[0.22em] text-white/64">
               {formatCopy.meetTheDuets.episodeLabel}
             </p>
-            <div className="mt-6 space-y-3">
+            <div className="mt-3 space-y-1.5">
               {formatCopy.meetTheDuets.stats.map((stat) => (
                 <p
                   key={stat}
-                  className="font-display text-[clamp(1.6rem,2.35vw,2.2rem)] uppercase leading-[0.98] tracking-[-0.04em] text-white"
+                  className="font-display text-[clamp(1.35rem,min(2vw,3.5svh),1.9rem)] uppercase leading-[0.98] tracking-[-0.04em] text-white"
                 >
                   {stat}
                 </p>
               ))}
             </div>
-            <p className="mt-7 font-display text-[clamp(1.35rem,2vw,1.8rem)] uppercase leading-[1.02] tracking-[-0.03em] text-white">
+            <p className="mt-3 font-display text-[clamp(1.15rem,min(1.7vw,3svh),1.55rem)] uppercase leading-[1.02] tracking-[-0.03em] text-white">
               {phaseOneHighlight[0]}
               <br />
               {phaseOneHighlight[1]}
@@ -1124,7 +1124,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
                   : handlePhaseOnePerform
               }
               disabled={isPhaseOneAnimating}
-              className="mt-7"
+              className="mt-4"
             >
               {phaseOneRevealComplete ? "CONTINUE" : "PERFORM"}
             </ArrowButton>
@@ -1241,11 +1241,11 @@ export function PresentationSlides({ slug }: { slug: string }) {
 
   if (slug === "opponent-spin") {
     return (
-      <PresentationPage className="justify-center py-12" scrollable>
-        <div className="grid min-h-[100svh] flex-1 gap-6 lg:grid-rows-[auto_1fr]">
+      <PresentationPage className="justify-center" scrollable>
+        <div className="grid min-h-0 flex-1 gap-[clamp(1rem,2.5svh,1.5rem)] lg:grid-rows-[auto_1fr]">
           <div>
             <SectionLabel accent="orange">PHASE 2</SectionLabel>
-            <OversizedHeading lines={["SPIN FOR", "YOUR OPPONENT"]} className="mt-5" />
+            <OversizedHeading lines={["SPIN FOR", "YOUR OPPONENT"]} className="mt-3 !text-[clamp(3.2rem,min(8vw,10svh),7rem)]" />
           </div>
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(300px,0.8fr)] lg:items-center">
             <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-black shadow-[0_26px_80px_rgba(0,0,0,0.55)]">
@@ -1256,7 +1256,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
                 playsInline
                 autoPlay={false}
                 controls={false}
-                className="aspect-video w-full object-cover"
+                className="h-[min(36svh,22rem)] w-full object-cover"
                 onEnded={handleOpponentSpinEnded}
                 onPlay={() => {
                   setIsOpponentSpinPlaying(true);
@@ -1430,11 +1430,11 @@ export function PresentationSlides({ slug }: { slug: string }) {
       <PresentationPage className="justify-center">
         <div className="max-w-5xl">
           <SectionLabel accent="cyan">PHASE 3</SectionLabel>
-          <OversizedHeading lines={["FATE OF THE", "FINAL EIGHT"]} className="mt-5" />
+          <OversizedHeading lines={["FATE OF THE", "FINAL EIGHT"]} className="mt-4 !text-[clamp(3.5rem,min(9vw,11svh),7rem)]" />
           <p className="mt-4 font-sans text-sm uppercase tracking-[0.22em] text-white/64">
             EPISODE 9
           </p>
-          <div className="mt-8 space-y-2">
+          <div className="mt-5 space-y-1">
             {[
               "8 CONTESTANTS REMAIN.",
               "EACH PERFORMER SPINS",
@@ -1445,13 +1445,13 @@ export function PresentationSlides({ slug }: { slug: string }) {
             ].map((line) => (
               <p
                 key={line}
-                className="font-display text-[clamp(2.4rem,4.5vw,4.5rem)] uppercase leading-[0.92] tracking-[-0.05em] text-white"
+                className="font-display text-[clamp(1.75rem,min(3.3vw,5.2svh),3.25rem)] uppercase leading-[0.92] tracking-[-0.05em] text-white"
               >
                 {line}
               </p>
             ))}
           </div>
-          <ArrowButton onClick={() => router.push("/final-spin")} className="mt-8">
+          <ArrowButton onClick={() => router.push("/final-spin")} className="mt-5">
             SEE WHO YOU SPUN
           </ArrowButton>
         </div>
@@ -1461,23 +1461,23 @@ export function PresentationSlides({ slug }: { slug: string }) {
 
   if (slug === "final-spin") {
     return (
-      <PresentationPage className="justify-center py-[clamp(4rem,8vh,6.5rem)]" scrollable>
-        <div className="grid min-h-[100svh] flex-1 gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
-          <div>
+      <PresentationPage className="justify-center" scrollable>
+        <div className="grid min-h-0 flex-1 gap-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
+          <div className="grid min-h-0 content-center">
             <p className="font-sans text-xs uppercase tracking-[0.35em] text-white/55">
               YOU SPUN THE WHEEL...
             </p>
-            <p className="mt-6 font-display text-[clamp(2.8rem,6vw,5rem)] uppercase leading-[0.9] tracking-[-0.05em] text-white">
+            <p className="mt-3 font-display text-[clamp(2.2rem,min(4vw,6svh),4rem)] uppercase leading-[0.9] tracking-[-0.05em] text-white">
               YOU GOT
             </p>
-            <p className="mt-3 font-display text-[clamp(5rem,12vw,9rem)] uppercase leading-[0.82] tracking-[-0.07em] text-[var(--accent-pink)]">
+            <p className="mt-1 font-display text-[clamp(4rem,min(9vw,11svh),7rem)] uppercase leading-[0.82] tracking-[-0.07em] text-[var(--accent-pink)]">
               {finalRoundPartnerName}
             </p>
             <p className="mt-4 font-sans text-sm uppercase tracking-[0.28em] text-white/68">
               YOUR NEW DUET PARTNER
             </p>
 
-            <div className="mt-8 max-w-[30rem]">
+            <div className="mt-4 max-w-[24rem]">
               <div className="overflow-hidden rounded-[2rem] border border-white/15 bg-[linear-gradient(135deg,rgba(255,52,145,0.16),rgba(0,0,0,0.18)_42%,rgba(0,0,0,0.78))] p-2 shadow-[0_0_42px_rgba(255,52,145,0.22)]">
                 <div className="overflow-hidden rounded-[1.5rem] border border-white/10 bg-black/30">
                   <Image
@@ -1486,21 +1486,21 @@ export function PresentationSlides({ slug }: { slug: string }) {
                     width={5792}
                     height={8688}
                     sizes="(max-width: 1024px) 92vw, 30rem"
-                    className="h-auto w-full object-contain object-top"
+                    className="h-[min(30svh,15rem)] w-full object-cover object-[center_20%]"
                     priority
                   />
                 </div>
               </div>
             </div>
 
-            <div className="mt-8 rounded-[2rem] border border-white/10 bg-white/5 p-6">
+            <div className="mt-4 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
               <p className="font-sans text-xs uppercase tracking-[0.35em] text-white/50">
                 EPISODE 9
               </p>
-              <p className="mt-4 font-display text-[clamp(2rem,3.8vw,3.3rem)] uppercase leading-[0.92] tracking-[-0.05em] text-white">
+              <p className="mt-2 font-display text-[clamp(1.5rem,min(2.6vw,4svh),2.5rem)] uppercase leading-[0.92] tracking-[-0.05em] text-white">
                 8 DUETS PERFORM.
               </p>
-              <p className="mt-2 font-display text-[clamp(2rem,3.8vw,3.3rem)] uppercase leading-[0.92] tracking-[-0.05em] text-[var(--accent-pink)]">
+              <p className="mt-1 font-display text-[clamp(1.5rem,min(2.6vw,4svh),2.5rem)] uppercase leading-[0.92] tracking-[-0.05em] text-[var(--accent-pink)]">
                 ONLY 4 REACH THE FINAL.
               </p>
             </div>
@@ -1510,7 +1510,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
             <p className="font-sans text-xs uppercase tracking-[0.35em] text-white/45">
               EPISODE 9 DUET GRID
             </p>
-            <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
+            <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
               {finalEpisodeDuets.map((duet) => {
                 const isViewerDuet = duet.id === finalEpisodeViewerDuetId;
                 const isAdvancing = finalEpisodeFinalistSet.has(duet.id);
@@ -1520,7 +1520,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
                 return (
                   <article
                     key={duet.id}
-                    className={`relative aspect-square overflow-hidden rounded-[1.45rem] border p-4 transition-all duration-500 ${
+                    className={`relative h-[min(21svh,10rem)] overflow-hidden rounded-[1.45rem] border p-4 transition-all duration-500 ${
                       isFinalEpisodeAnimating
                         ? "scale-[0.98] border-white/25 bg-white/[0.08] opacity-80"
                         : isAdvancing
@@ -1565,7 +1565,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
                   : handleFinalEpisodePerform
               }
               disabled={isFinalEpisodeAnimating}
-              className="mt-8"
+              className="mt-5"
             >
               {finalEpisodeRevealComplete ? "FINAL EPISODE" : "PERFORM"}
             </ArrowButton>
@@ -1593,7 +1593,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
               .map((duet) => (
                 <article
                   key={duet.id}
-                  className="relative aspect-square overflow-hidden rounded-[1.55rem] border border-[var(--accent-pink)] bg-[var(--accent-pink)]/16 p-4 shadow-[0_0_28px_rgba(255,52,145,0.24)] lg:rounded-[1.75rem] lg:p-5"
+                  className="relative h-[min(24svh,11rem)] overflow-hidden rounded-[1.55rem] border border-[var(--accent-pink)] bg-[var(--accent-pink)]/16 p-4 shadow-[0_0_28px_rgba(255,52,145,0.24)] lg:rounded-[1.75rem] lg:p-5"
                 >
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),transparent_58%)]" />
                   <p className="relative z-10 font-sans text-[0.62rem] uppercase tracking-[0.28em] text-white/70 lg:text-[0.68rem] lg:tracking-[0.3em]">
@@ -1614,51 +1614,51 @@ export function PresentationSlides({ slug }: { slug: string }) {
             <p className="font-sans text-xs uppercase tracking-[0.35em] text-white/50">
               EPISODE 10
             </p>
-            <div className="mt-4">
+            <div className="mt-2">
               {["THE", "FINAL", "FOUR"].map((line) => (
                 <p
                   key={line}
-                  className="font-display text-[clamp(3.7rem,9vw,7rem)] uppercase leading-[0.82] tracking-[-0.07em] text-[var(--accent-pink)]"
+                  className="font-display text-[clamp(3rem,min(7vw,8svh),5.5rem)] uppercase leading-[0.82] tracking-[-0.07em] text-[var(--accent-pink)]"
                 >
                   {line}
                 </p>
               ))}
             </div>
-            <div className="mt-5 space-y-4">
-              <p className="font-display text-[clamp(1.4rem,2.5vw,2rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
+            <div className="mt-3 space-y-[clamp(0.2rem,0.65svh,0.5rem)]">
+              <p className="font-display text-[clamp(1rem,min(1.8vw,2.6svh),1.55rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
                 <span className="text-[var(--accent-pink)]">THE FINAL FOUR</span>
                 <br />
                 PERFORM SOLO.
               </p>
-              <p className="font-display text-[clamp(1.4rem,2.5vw,2rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
+              <p className="font-display text-[clamp(1rem,min(1.8vw,2.6svh),1.55rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
                 <span className="text-[var(--accent-pink)]">ONE SINGER</span>
                 <br />
                 <span className="text-[var(--accent-pink)]">IS ELIMINATED.</span>
               </p>
-              <p className="font-display text-[clamp(1.4rem,2.5vw,2rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
+              <p className="font-display text-[clamp(1rem,min(1.8vw,2.6svh),1.55rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
                 THEN WE REVEAL
                 <br />
                 THE SECRET SUPERSTAR.
               </p>
-              <p className="font-display text-[clamp(1.4rem,2.5vw,2rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
+              <p className="font-display text-[clamp(1rem,min(1.8vw,2.6svh),1.55rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
                 <span className="text-[var(--accent-pink)]">THE FINAL THREE</span>
                 <br />
                 EACH PERFORM THE DUET SONG
                 <br />
                 WITH THE SUPERSTAR.
               </p>
-              <p className="font-display text-[clamp(1.4rem,2.5vw,2rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
+              <p className="font-display text-[clamp(1rem,min(1.8vw,2.6svh),1.55rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
                 <span className="text-[var(--accent-pink)]">ONLY ONE SINGER</span>
                 <br />
                 <span className="text-[var(--accent-pink)]">IS CHOSEN.</span>
               </p>
-              <p className="font-display text-[clamp(1.4rem,2.5vw,2rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
+              <p className="font-display text-[clamp(1rem,min(1.8vw,2.6svh),1.55rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
                 THE SONG IS
                 <br />
                 <span className="text-[var(--accent-pink)]">RECORDED AND RELEASED.</span>
               </p>
             </div>
-            <ArrowButton onClick={() => router.push("/secret-superstar")} className="mt-8">
+            <ArrowButton onClick={() => router.push("/secret-superstar")} className="mt-3">
               REVEAL THE SUPERSTAR
             </ArrowButton>
           </div>
@@ -1680,7 +1680,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
                 height={1500}
                 priority
                 sizes="(max-width: 1024px) 92vw, 46vw"
-                className={`h-[58vh] w-full object-cover object-center transition-all duration-700 sm:h-[62vh] lg:h-[68vh] ${
+                className={`h-[min(58svh,32rem)] w-full object-cover object-center transition-all duration-700 ${
                   superstarVisible ? "scale-100 blur-0" : "scale-[1.03] blur-md"
                 }`}
               />
@@ -1753,39 +1753,39 @@ export function PresentationSlides({ slug }: { slug: string }) {
 
   if (slug === "host") {
     return (
-      <PresentationPage className="justify-start">
-        <div className="flex min-h-full flex-col pt-[3.75rem]">
+      <PresentationPage className="justify-center">
+        <div className="flex min-h-0 flex-1 flex-col justify-center">
           <div className="max-w-3xl">
             <SectionLabel accent="lime">WHO’S GOT</SectionLabel>
-            <p className="mt-5 font-display text-[clamp(3.5rem,8vw,8rem)] uppercase leading-[0.84] tracking-[-0.06em] text-[var(--accent-pink)]">
+            <p className="mt-3 font-display text-[clamp(3rem,min(7vw,9svh),6.5rem)] uppercase leading-[0.84] tracking-[-0.06em] text-[var(--accent-pink)]">
               HOST VIBES
             </p>
-            <p className="mt-5 max-w-2xl font-sans text-lg leading-8 text-white/74">
+            <p className="mt-3 max-w-2xl font-sans text-[clamp(0.95rem,2.2svh,1.125rem)] leading-[1.45] text-white/74">
               {formatCopy.host.body}
             </p>
           </div>
-          <div className="mt-[4.5rem] grid gap-4 lg:mt-[6.5rem] lg:grid-cols-3">
+          <div className="mt-[clamp(1rem,3svh,2rem)] grid gap-4 lg:grid-cols-3">
             {hostReferences.map((reference) => (
               <article
                 key={reference.name}
                 className="rounded-[2rem] border border-white/10 bg-white/5 p-4"
               >
-                <div className="relative min-h-[320px] overflow-hidden rounded-[1.5rem] border border-white/8 bg-black">
+                <div className="relative h-[min(31svh,14rem)] overflow-hidden rounded-[1.5rem] border border-white/8 bg-black">
                   <Image
                     src={reference.imageSrc}
                     alt={reference.imageLabel}
                     fill
                     sizes="(max-width: 1024px) 92vw, 30vw"
-                    className="object-cover object-center"
+                    className="object-cover object-[center_25%]"
                   />
                 </div>
-                <p className="mt-4 font-display text-4xl uppercase leading-none tracking-[-0.05em] text-white">
+                <p className="mt-3 font-display text-[clamp(1.75rem,4svh,2.25rem)] uppercase leading-none tracking-[-0.05em] text-white">
                   {reference.name}
                 </p>
               </article>
             ))}
           </div>
-          <p className="mt-8 font-sans text-xs uppercase tracking-[0.32em] text-white/48">
+          <p className="mt-4 font-sans text-xs uppercase tracking-[0.32em] text-white/48">
             {formatCopy.host.label}
           </p>
         </div>
@@ -1814,7 +1814,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
           </div>
           <div className="flex justify-center lg:justify-end">
             <div className="w-full max-w-[27.5rem] overflow-hidden rounded-[2rem] border border-white/15 bg-[linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,0,0,0.2)_42%,rgba(0,0,0,0.82))] p-3 shadow-[0_0_48px_rgba(168,85,247,0.16)]">
-              <div className="relative aspect-[1121/1403] overflow-hidden rounded-[1.5rem] border border-white/10 bg-black/30">
+              <div className="relative h-[min(52svh,28rem)] overflow-hidden rounded-[1.5rem] border border-white/10 bg-black/30">
                 <Image
                   src="/duet.png"
                   alt="Duet creators"
@@ -1873,11 +1873,11 @@ export function PresentationSlides({ slug }: { slug: string }) {
       >
         <div className="flex h-full flex-1 flex-col items-center justify-center text-center text-black">
           <div>
-            <h1 className="font-display text-[clamp(6rem,23vw,18rem)] uppercase leading-[0.82] tracking-[-0.08em] text-black">
+            <h1 className="font-display text-[clamp(5rem,min(20vw,22svh),16rem)] uppercase leading-[0.82] tracking-[-0.08em] text-black">
               <span className="block">THANK</span>
               <span className="block">YOU</span>
             </h1>
-            <p className="mt-8 whitespace-nowrap font-display text-[clamp(1.6rem,7vw,6rem)] uppercase leading-none tracking-[-0.04em] text-white">
+            <p className="mt-5 whitespace-nowrap font-display text-[clamp(1.4rem,min(6vw,8svh),5rem)] uppercase leading-none tracking-[-0.04em] text-white">
               FOR SHARING THE SPOTLIGHT
             </p>
           </div>

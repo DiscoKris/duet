@@ -173,7 +173,7 @@ export function PresentationShell({
   const progress = ((route.index + 1) / presentationRoutes.length) * 100;
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-black text-white">
+    <div className="relative h-[100svh] overflow-hidden bg-black text-white">
       <button
         type="button"
         onClick={() => setMenuOpen((current) => !current)}
@@ -189,19 +189,19 @@ export function PresentationShell({
       {menuOpen ? (
         <div
           id="presentation-menu"
-          className="fixed inset-0 z-40 flex min-h-screen items-center justify-center bg-black/94 p-8"
+          className="fixed inset-0 z-40 overflow-y-auto bg-black/94 px-8 py-16"
         >
-          <div className="w-full max-w-5xl">
+          <div className="mx-auto w-full max-w-5xl">
             <p className="font-sans text-xs uppercase tracking-[0.35em] text-white/45">
               Presentation Map
             </p>
-            <div className="mt-8 grid gap-3 md:grid-cols-2">
+            <div className="mt-6 grid gap-x-10 md:grid-cols-2">
               {presentationRoutes.map((menuRoute, index) => (
                 <Link
                   key={menuRoute.path}
                   href={menuRoute.path}
                   onClick={() => setMenuOpen(false)}
-                  className={`group flex items-center justify-between border-b py-4 font-display text-4xl uppercase tracking-[-0.05em] transition-colors ${
+                  className={`group flex items-center justify-between border-b py-[clamp(0.45rem,1.1vh,1rem)] font-display text-[clamp(1.5rem,4vh,2.25rem)] uppercase tracking-[-0.05em] transition-colors ${
                     pathname === menuRoute.path
                       ? "border-[var(--accent-pink)] text-[var(--accent-pink)]"
                       : "border-white/10 text-white hover:text-[var(--accent-pink)]"
@@ -232,12 +232,12 @@ export function PresentationShell({
         </div>
       </div>
 
-      <div key={pathname} className="presentation-route-enter min-h-screen">
+      <div key={pathname} className="presentation-route-enter h-[100svh]">
         {children}
       </div>
 
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex items-end justify-end px-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:px-6 md:pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-        <div className={`pointer-events-auto ${showPartnerBadge ? "mb-12" : ""}`}>
+        <div className={`pointer-events-auto ${showPartnerBadge ? "mb-12 md:mb-0 md:mr-52" : ""}`}>
           {nextRoute && !hiddenGlobalNextRoutes.has(pathname) ? (
             <Link
               href={nextRoute.path}

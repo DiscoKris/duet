@@ -20,7 +20,9 @@ export function PresentationPage({
   return (
     <section
       className={`relative w-full ${
-        scrollable ? "min-h-[100svh] overflow-visible" : "h-screen overflow-hidden"
+        scrollable
+          ? "min-h-[100svh] overflow-y-auto lg:h-[100svh] lg:min-h-0 lg:overflow-hidden"
+          : "h-[100svh] overflow-hidden"
       } ${backgroundClassName}`}
     >
       {backgroundImage ? (
@@ -38,8 +40,10 @@ export function PresentationPage({
         </div>
       ) : null}
       <div
-        className={`relative z-10 mx-auto flex w-full max-w-[1600px] flex-col px-5 pb-24 pt-24 sm:px-8 lg:px-12 ${
-          scrollable ? "min-h-[100svh] overflow-visible" : "h-screen overflow-hidden"
+        className={`relative z-10 mx-auto flex w-full max-w-[1600px] flex-col px-[clamp(1.25rem,3.4vw,3rem)] pb-[clamp(4.75rem,9svh,6rem)] pt-[clamp(3.75rem,8svh,6rem)] ${
+          scrollable
+            ? "min-h-[100svh] lg:h-full lg:min-h-0 lg:overflow-hidden"
+            : "h-full overflow-hidden"
         } ${className}`}
       >
         {children}

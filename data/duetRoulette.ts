@@ -269,8 +269,8 @@ export const logline =
 export const phaseDescriptions = [
   {
     number: "01",
-    title: "DUETS",
-    description: "Spin for Pairs, Sing as Pairs. The roulette wheel reveals the celebrity partnerships.",
+    title: "SPIN FOR PAIRS, SING AS PAIRS",
+    description: "Spin the roulette wheel to reveal the celebrity partnerships.",
   },
   {
     number: "02",
@@ -314,7 +314,7 @@ export const formatCopy = {
     cta: "MEET YOUR DUET",
   },
   partnership: {
-    title: ["YOU'VE GOT THE STAR.", "NOW FIND THE CHEMISTRY."],
+    title: ["YOU'VE MET THE STAR.", "NOW FIND THE CHEMISTRY."],
     body: "Every contestant is paired with a famous performer. Together, they rehearse, perform and fight to stay in the competition. The star is a mentor and the contestant’s partner.",
     cta: "TAKE THE STAGE",
   },
