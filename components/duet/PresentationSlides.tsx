@@ -837,11 +837,14 @@ export function PresentationSlides({ slug }: { slug: string }) {
   if (slug === "contestant") {
     return (
       <PresentationPage className="justify-center">
-        <div className="max-w-5xl">
+        <div className="max-w-5xl -translate-y-4">
           <SectionLabel accent="cyan">{formatCopy.contestant.eyebrow}</SectionLabel>
-          <OversizedHeading lines={["YOU ARE ONE OF", "THE CONTESTANTS"]} className="mt-5" />
-          <p className="mt-6 max-w-xl font-sans text-xl leading-8 text-white/74">
-            {formatCopy.contestant.body}
+          <OversizedHeading
+            lines={["YOU ARE ONE", "OF THE", "CONTESTANTS"]}
+            className="mt-5 !text-[clamp(4.2rem,min(13vw,19vh),12rem)]"
+          />
+          <p className="mt-6 max-w-2xl font-sans text-xl leading-8 text-white">
+            Congratulations. You’ve made it through our audition process and you’re one of our contestants. You obviously have the voice, but now chance decides your partner.
           </p>
           <ArrowButton onClick={() => router.push("/spin")} className="mt-8">
             SPIN THE WHEEL
@@ -1030,7 +1033,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
             </div>
             <div className="mt-7 rounded-[2rem] border border-white/10 bg-white/5 p-6">
               <p className="font-display text-[clamp(2.4rem,5vw,4.5rem)] uppercase leading-[0.88] tracking-[-0.05em] text-white">
-                YOU&apos;VE GOT THE STAR.
+                YOU&apos;VE MET THE STAR.
                 <br />
                 NOW FIND THE CHEMISTRY.
               </p>
@@ -1092,7 +1095,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
             <div className="mt-4">
               <SectionLabel accent="orange">
                 <span className="text-[0.98rem] font-semibold tracking-[0.28em]">
-                  SPIN FOR PARTNERS
+                  SPIN FOR PAIRS, SING AS PAIRS
                 </span>
               </SectionLabel>
             </div>
@@ -1193,7 +1196,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
           <ResultReveal
             eyebrow="THE AUDIENCE HAS VOTED..."
             title={formatCopy.meetTheDuets.resultTitle}
-            subtitle={formatCopy.meetTheDuets.body}
+            subtitle="Across the opening episodes, each celebrity-and-contestant pairing performs together. The audience votes for the duets with the most chemistry, star power and vocal impact."
           />
         </div>
       </PresentationPage>

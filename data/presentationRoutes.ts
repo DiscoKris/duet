@@ -77,7 +77,7 @@ export const presentationRoutes: PresentationRoute[] = [
     slug: "phases",
     menuLabel: "Phases",
     progressLabel: "Three Phases",
-    nextLabel: "EPISODE 1",
+    nextLabel: "PHASE 1",
   },
   {
     path: "/phase-one",

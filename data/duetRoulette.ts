@@ -270,17 +270,17 @@ export const phaseDescriptions = [
   {
     number: "01",
     title: "DUETS",
-    description: "The roulette wheel reveals the celebrity partnerships.",
+    description: "Spin for Pairs, Sing as Pairs. The roulette wheel reveals the celebrity partnerships.",
   },
   {
     number: "02",
     title: "HEAD TO HEAD DUET",
-    description: "Surviving duets spin the wheel to face one another head-to-head.",
+    description: "Duet Duels: The contestants will be trained all week by their mentor — then they must spin the wheel to see who they sing head-to-head against in duet duels.",
   },
   {
     number: "03",
     title: "THE FATE OF EIGHT",
-    description: "The final singers compete for the Secret Superstar.",
+    description: "The Fate of the Final 8 sing head-to-head with shocking twists and our secret singer is finally revealed.",
   },
 ];
 
