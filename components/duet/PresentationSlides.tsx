@@ -116,6 +116,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
     "ONLY 4 WILL ADVANCE.",
   ];
   const phaseOneViewerDuetId = `you-${activePartner.id}`;
+  const niaPartner = activePartner.id === "miranda" ? "REBA" : "MIRANDA";
   const phaseOneDuets = useMemo<PhaseOneDuet[]>(
     () => [
       {
@@ -126,13 +127,18 @@ export function PresentationSlides({ slug }: { slug: string }) {
       },
       { id: "ari-colbie", contestant: "ARI", partner: "COLBIE", accent: "var(--accent-cyan)" },
       { id: "jules-clay", contestant: "JULES", partner: "CLAY", accent: "var(--accent-lime)" },
-      { id: "nia-jasmine", contestant: "NIA", partner: "JASMINE", accent: "var(--accent-purple)" },
+      {
+        id: `nia-${niaPartner.toLowerCase()}`,
+        contestant: "NIA",
+        partner: niaPartner,
+        accent: "var(--accent-purple)",
+      },
       { id: "marcus-mya", contestant: "MARCUS", partner: "MÝA", accent: "var(--accent-orange)" },
       { id: "leo-daniel", contestant: "LEO", partner: "DANIEL", accent: "var(--accent-pink)" },
       { id: "skye-ryan", contestant: "SKYE", partner: "RYAN", accent: "var(--accent-cyan)" },
       { id: "tori-ruben", contestant: "TORI", partner: "RUBEN", accent: "var(--accent-lime)" },
     ],
-    [activePartner.accent, activePartner.shortName, phaseOneViewerDuetId],
+    [activePartner.accent, activePartner.shortName, niaPartner, phaseOneViewerDuetId],
   );
   const validPhaseOneAdvancingDuetIds = useMemo(
     () =>
@@ -917,7 +923,11 @@ export function PresentationSlides({ slug }: { slug: string }) {
                             width={900}
                             height={1200}
                             sizes="(max-width: 1024px) 54vw, 18rem"
-                            className="h-[clamp(16rem,46vw,24rem)] w-full object-contain"
+                            className={`h-[clamp(16rem,46vw,24rem)] w-full ${
+                              resolvedSelectedPartner.id === "miranda"
+                                ? "object-cover object-[center_38%]"
+                                : "object-contain"
+                            }`}
                           />
                           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,52,145,0.1),rgba(57,240,255,0.08))]" />
                         </div>
@@ -1009,7 +1019,11 @@ export function PresentationSlides({ slug }: { slug: string }) {
                 height={1200}
                 priority
                 sizes="(max-width: 1024px) 92vw, 42vw"
-                className="h-[min(56svh,31rem)] w-full object-contain"
+                className={`h-[min(56svh,31rem)] w-full ${
+                  resolvedSelectedPartner.id === "miranda"
+                    ? "object-cover object-[center_38%]"
+                    : "object-contain"
+                }`}
               />
             </div>
           </div>

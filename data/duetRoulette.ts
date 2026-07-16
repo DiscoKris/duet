@@ -24,7 +24,7 @@ export type Partner = {
 };
 
 export type SpinPartner = {
-  id: "colbie" | "kylie" | "mya" | "jasmine";
+  id: "colbie" | "kylie" | "mya" | "miranda";
   name: string;
   shortName: string;
   firstName: string;
@@ -110,9 +110,9 @@ export const partners: Partner[] = [
     accent: "var(--accent-orange)",
   },
   {
-    name: "Jasmine Rice",
-    title: "VOCAL DISRUPTOR",
-    imageLabel: "Jasmine Rice",
+    name: "Miranda Lambert",
+    title: "GRAMMY-WINNING COUNTRY STAR",
+    imageLabel: "Miranda Lambert",
     accent: "var(--accent-purple)",
   },
   {
@@ -172,17 +172,17 @@ export const spinPartners: SpinPartner[] = [
     clue: ["SHE’S DUETED BEFORE", "AND WON A GRAMMY."],
   },
   {
-    id: "jasmine",
-    name: "JASMINE TRIAS",
-    shortName: "JASMINE",
-    firstName: "JASMINE",
-    title: "AMERICAN IDOL FINALIST",
-    descriptor: "AMERICAN IDOL FINALIST",
-    imageLabel: "Jasmine Trias",
-    imageSrc: "/jasmine.png",
-    image: "/jasmine.png",
+    id: "miranda",
+    name: "MIRANDA LAMBERT",
+    shortName: "MIRANDA",
+    firstName: "MIRANDA",
+    title: "GRAMMY-WINNING COUNTRY STAR",
+    descriptor: "GRAMMY-WINNING COUNTRY STAR",
+    imageLabel: "Miranda Lambert",
+    imageSrc: "/miranda.png",
+    image: "/miranda.png",
     accent: "var(--accent-purple)",
-    clue: ["THIS HAWAIIAN NATIVE", "HAD MILLIONS VOTING FOR HER."],
+    clue: ["SHE’S A COUNTRY SUPERSTAR", "WITH A GRAMMY ON HER SHELF."],
   },
 ];
 
@@ -218,7 +218,7 @@ export const duetGrid = [
   { contestant: "You", partner: "Kylie", accent: "var(--accent-pink)" },
   { contestant: "Ari", partner: "Colbie", accent: "var(--accent-cyan)" },
   { contestant: "Jules", partner: "Ruben", accent: "var(--accent-lime)" },
-  { contestant: "Nia", partner: "Jasmine", accent: "var(--accent-purple)" },
+  { contestant: "Nia", partner: "Miranda", accent: "var(--accent-purple)" },
   { contestant: "Marcus", partner: "Mya", accent: "var(--accent-orange)" },
   { contestant: "Leo", partner: "Daniel", accent: "var(--accent-pink)" },
   { contestant: "Skye", partner: "Kylie", accent: "var(--accent-cyan)" },

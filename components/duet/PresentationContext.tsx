@@ -49,6 +49,22 @@ type PresentationContextValue = PresentationState & {
 };
 
 const STORAGE_KEY = "duet-roulette-presentation-state";
+const legacyPartnerToken = ["jas", "mine"].join("");
+const partnerDependentPaths = new Set([
+  "/partner",
+  "/phases",
+  "/phase-one",
+  "/phase-one-result",
+  "/phase-two",
+  "/opponent-spin",
+  "/duel",
+  "/duel-result",
+  "/phase-three",
+  "/final-spin",
+  "/final-four",
+  "/secret-superstar",
+  "/winner",
+]);
 
 const defaultState: PresentationState = {
   selectedPartner: null,
@@ -63,6 +79,27 @@ const defaultState: PresentationState = {
   finalRoundPartner: null,
   finalistDuetIds: [],
 };
+
+function hasLegacySelectedPartner(value: unknown) {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const selectedPartner = (value as { selectedPartner?: unknown }).selectedPartner;
+
+  if (typeof selectedPartner === "string") {
+    return selectedPartner.toLowerCase().includes(legacyPartnerToken);
+  }
+
+  if (!selectedPartner || typeof selectedPartner !== "object") {
+    return false;
+  }
+
+  return Object.values(selectedPartner).some(
+    (entry) =>
+      typeof entry === "string" && entry.toLowerCase().includes(legacyPartnerToken),
+  );
+}
 
 function resolveOpponent(value: unknown) {
   if (!value) {
@@ -142,10 +179,38 @@ export function PresentationProvider({
     let nextState = defaultState;
 
     try {
-      const stored = window.localStorage.getItem(STORAGE_KEY);
+      const stored =
+        window.localStorage.getItem(STORAGE_KEY) ??
+        window.sessionStorage.getItem(STORAGE_KEY);
 
       if (stored) {
-        nextState = normalizeState(JSON.parse(stored));
+        const parsedState = JSON.parse(stored);
+        const legacyPartnerSelected = hasLegacySelectedPartner(parsedState);
+
+        nextState = normalizeState(parsedState);
+
+        if (legacyPartnerSelected) {
+          nextState = {
+            ...nextState,
+            selectedPartner: null,
+            firstWheelSpun: false,
+            spinVideoPlayed: false,
+            singerRevealed: false,
+            selectedOpponent: null,
+            opponentSpinVideoPlayed: false,
+            opponentRevealed: false,
+            performanceStyle: null,
+            phaseOneAdvancingDuetIds: [],
+          };
+
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
+          window.sessionStorage.removeItem(STORAGE_KEY);
+
+          if (partnerDependentPaths.has(window.location.pathname)) {
+            window.location.replace("/spin");
+            return;
+          }
+        }
 
         if (window.location.pathname === "/spin") {
           nextState = {
@@ -166,6 +231,8 @@ export function PresentationProvider({
             performanceStyle: null,
           };
         }
+
+        window.sessionStorage.removeItem(STORAGE_KEY);
       }
     } catch {
       nextState = defaultState;
