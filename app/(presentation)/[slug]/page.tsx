@@ -15,6 +15,14 @@ export default async function PresentationRoutePage({
 }) {
   const { slug } = await params;
 
+  if (slug === "phase-one-result") {
+    redirect("/phase-two");
+  }
+
+  if (slug === "final-four") {
+    redirect("/the-final");
+  }
+
   if (slug === "finale") {
     redirect("/thank-you");
   }

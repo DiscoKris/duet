@@ -302,7 +302,7 @@ export const formatCopy = {
   ],
   promiseFinale: ["THIS IS", "DUET ROULETTE."],
   centerpieceBody: "THE ROULETTE WHEEL IS THE HEART OF THE SHOW.",
-  centerpiecePrompt: "BUT THE BEST WAY TO UNDERSTAND IT IS TO PLAY IT.",
+  centerpiecePrompt: "BUT THE BEST WAY TO UNDERSTAND, IS TO PLAY IT YOURSELF.",
   contestant: {
     eyebrow: "CONGRATULATIONS.",
     title: ["YOU'RE ONE OF", "32 CONTESTANTS."],

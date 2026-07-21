@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   duelOpponents,
   formatCopy,
@@ -24,6 +24,17 @@ import { usePresentation } from "./PresentationContext";
 
 const loglineDeckCopy =
   "It’s a singing showdown where talent & chance collide. Performers are paired with famous partners, face off in unpredictable DUET DUELS and must sing head-to-head to stay in the competition. Eventually, only one singer wins a life-changing place in the spotlight.";
+const problemPageCopy = {
+  lines: [
+    "A MUSICAL SUPERSTAR",
+    "HAS A BRAND-NEW HIT",
+    "READY TO RECORD...",
+    "...BUT THEY NEED",
+    "SOMEONE TO SING IT",
+    "WITH.",
+  ],
+  note: "(BTW: WHO ARE THEY?)",
+};
 
 type PhaseOneDuet = {
   id: string;
@@ -38,23 +49,242 @@ type FinalEpisodeDuet = {
   accent: string;
 };
 
-const finalRoundPartnerName = "STING";
-const finalEpisodeViewerDuetId = "you-sting";
+type SpinMediaPhase = "idle" | "spinning" | "settling" | "clue";
+
+const finalRoundPartnerName = "VANESSA";
+const finalEpisodeViewerDuetId = "you-vanessa";
+const finalEpisodeSecondFinalistId = "ben-tori";
+const opponentSelectedSong = "HOTEL CALIFORNIA";
 const proofButtonLabels = [
   "I’M INTERESTED. TELL ME MORE",
   "KEEP GOING",
   "WHAT’S NEXT?",
 ];
 const finalEpisodeDuets: FinalEpisodeDuet[] = [
-  { id: finalEpisodeViewerDuetId, label: "YOU + STING", accent: "var(--accent-pink)" },
-  { id: "alex-alicia", label: "ALEX + ALICIA", accent: "var(--accent-cyan)" },
-  { id: "maya-harry", label: "MAYA + HARRY", accent: "var(--accent-orange)" },
-  { id: "ben-kelly", label: "BEN + KELLY", accent: "var(--accent-lime)" },
-  { id: "sophie-john", label: "SOPHIE + JOHN", accent: "var(--accent-purple)" },
-  { id: "luke-shania", label: "LUKE + SHANIA", accent: "var(--accent-cyan)" },
-  { id: "emma-adam", label: "EMMA + ADAM", accent: "var(--accent-orange)" },
-  { id: "noah-celine", label: "NOAH + CELINE", accent: "var(--accent-lime)" },
+  { id: finalEpisodeViewerDuetId, label: "YOU + VANESSA", accent: "var(--accent-pink)" },
+  { id: "alex-riley", label: "ALEX + RILEY", accent: "var(--accent-cyan)" },
+  { id: "maya-jules", label: "MAYA + JULES", accent: "var(--accent-orange)" },
+  { id: finalEpisodeSecondFinalistId, label: "BEN + TORI", accent: "var(--accent-lime)" },
 ];
+
+type EpisodeTenStage =
+  | "final-four"
+  | "first-elimination"
+  | "solo-round"
+  | "second-elimination";
+
+const episodeTenFinalists = [
+  { name: "YOU", accent: "var(--accent-pink)" },
+  { name: "VANESSA", accent: "var(--accent-cyan)" },
+  { name: "BEN", accent: "var(--accent-orange)" },
+  { name: "TORI", accent: "var(--accent-lime)" },
+];
+
+function EpisodeTenFinalSequence() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const isShowdown = searchParams.get("stage") === "showdown";
+  const [stage, setStage] = useState<EpisodeTenStage>("final-four");
+
+  const eliminatedNames = new Set(
+    stage === "second-elimination"
+      ? ["VANESSA", "BEN"]
+      : stage === "first-elimination" || stage === "solo-round"
+        ? ["VANESSA"]
+        : [],
+  );
+  const visibleFinalists = isShowdown
+    ? episodeTenFinalists.filter(({ name }) => name === "YOU" || name === "TORI")
+    : episodeTenFinalists;
+  const buttonLabel = isShowdown
+    ? "CLAIM THE SPOTLIGHT"
+    : stage === "second-elimination"
+      ? "REVEAL THE SUPERSTAR"
+      : stage === "solo-round"
+        ? "REVEAL RESULT"
+        : stage === "first-elimination"
+          ? "SOLO ROUND"
+          : "PERFORM";
+  const handleContinue = () => {
+    if (isShowdown) {
+      router.push("/winner");
+      return;
+    }
+
+    if (stage === "final-four") {
+      setStage("first-elimination");
+      return;
+    }
+
+    if (stage === "first-elimination") {
+      setStage("solo-round");
+      return;
+    }
+
+    if (stage === "solo-round") {
+      setStage("second-elimination");
+      return;
+    }
+
+    router.push("/secret-superstar");
+  };
+
+  return (
+    <PresentationPage className="justify-center">
+      <div className="grid min-h-0 flex-1 gap-6 lg:grid-cols-[0.68fr_1.32fr] lg:items-center lg:gap-10">
+        <div>
+          <p className="font-sans text-xs uppercase tracking-[0.35em] text-[var(--accent-orange)]">
+            EPISODE 10
+          </p>
+          <h1 className="mt-3 font-display text-[clamp(3.5rem,min(8vw,11svh),7rem)] uppercase leading-[0.82] tracking-[-0.07em] text-[var(--accent-pink)]">
+            {isShowdown ? (
+              <>
+                <span className="block">THE FINAL</span>
+                <span className="block">TWO</span>
+              </>
+            ) : (
+              "THE FINAL"
+            )}
+          </h1>
+          <ArrowButton onClick={handleContinue} className="mt-6">
+            {buttonLabel}
+          </ArrowButton>
+        </div>
+
+        <div className="grid min-h-0 content-center" aria-live="polite">
+          {isShowdown ? (
+            <div>
+              <div className="grid max-w-xl grid-cols-2 gap-3">
+                {visibleFinalists.map((finalist) => (
+                  <article
+                    key={finalist.name}
+                    className="flex h-[min(15svh,7.5rem)] items-center rounded-[1.5rem] border border-white/12 bg-white/5 p-4 shadow-[0_0_24px_rgba(255,52,145,0.12)]"
+                  >
+                    <p
+                      className="font-display text-[clamp(2rem,min(4vw,5svh),3.5rem)] uppercase leading-none tracking-[-0.05em]"
+                      style={{ color: finalist.accent }}
+                    >
+                      {finalist.name}
+                    </p>
+                  </article>
+                ))}
+              </div>
+              <div className="mt-[clamp(1rem,2.5svh,1.5rem)] space-y-1">
+                <p className="font-display text-[clamp(1.35rem,min(2.4vw,3.5svh),2.25rem)] uppercase leading-[0.96] tracking-[-0.04em] text-white">
+                  TORI SINGS WITH SIA FIRST.
+                </p>
+                <p className="font-display text-[clamp(1.35rem,min(2.4vw,3.5svh),2.25rem)] uppercase leading-[0.96] tracking-[-0.04em] text-white">
+                  THEN YOU SING WITH SIA.
+                </p>
+                <p className="pt-2 font-sans text-xs font-semibold uppercase tracking-[0.32em] text-white/60">
+                  THE VOTES ARE IN...
+                </p>
+                <p className="pt-1 font-display text-[clamp(3.75rem,min(8vw,10svh),7rem)] uppercase leading-[0.82] tracking-[-0.07em] text-[var(--accent-pink)]">
+                  YOU WIN.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div className="min-h-[clamp(6.5rem,16svh,9rem)]">
+                {stage === "final-four" ? (
+                  <p className="font-display text-[clamp(1.65rem,min(3.2vw,4.5svh),3rem)] uppercase leading-[0.92] tracking-[-0.05em] text-white">
+                    THE FINAL FOUR
+                    <br />
+                    PERFORM WITH
+                    <br />
+                    <span className="text-[var(--accent-pink)]">
+                      A MYSTERY CELEBRITY GUEST.
+                    </span>
+                  </p>
+                ) : stage === "first-elimination" ? (
+                  <>
+                    <p className="font-display text-[clamp(1.35rem,min(2.4vw,3.5svh),2.25rem)] uppercase leading-[0.96] tracking-[-0.04em] text-white">
+                      THE FINAL FOUR PERFORMED WITH
+                      <br />
+                      A MYSTERY CELEBRITY GUEST.
+                    </p>
+                    <p className="mt-3 font-display text-[clamp(2rem,min(4vw,5.5svh),3.75rem)] uppercase leading-[0.9] tracking-[-0.05em] text-[var(--accent-pink)]">
+                      VANESSA IS ELIMINATED.
+                    </p>
+                  </>
+                ) : stage === "solo-round" ? (
+                  <>
+                    <p className="font-display text-[clamp(1.5rem,min(2.8vw,4svh),2.5rem)] uppercase leading-[0.94] tracking-[-0.04em] text-white">
+                      THREE REMAINING SINGERS
+                      <br />
+                      PERFORM SOLO.
+                    </p>
+                    <p className="mt-4 font-sans text-xs font-semibold uppercase tracking-[0.32em] text-white/60">
+                      THE RESULTS ARE IN...
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-display text-[clamp(1.5rem,min(2.8vw,4svh),2.5rem)] uppercase leading-[0.94] tracking-[-0.04em] text-white">
+                      THREE REMAINING SINGERS
+                      <br />
+                      PERFORM SOLO.
+                    </p>
+                    <p className="mt-3 font-display text-[clamp(2rem,min(4vw,5.5svh),3.75rem)] uppercase leading-[0.9] tracking-[-0.05em] text-[var(--accent-pink)]">
+                      BEN IS ELIMINATED.
+                    </p>
+                  </>
+                )}
+              </div>
+
+              <div className="mt-3 grid max-w-xl grid-cols-2 gap-3">
+                {visibleFinalists.map((finalist) => {
+                  const isEliminated = eliminatedNames.has(finalist.name);
+
+                  return (
+                    <article
+                      key={finalist.name}
+                      className={`flex h-[min(17svh,8.5rem)] flex-col justify-between rounded-[1.5rem] border p-4 transition-all duration-500 ${
+                        isEliminated
+                          ? "border-white/8 bg-white/[0.03] opacity-30"
+                          : "border-white/12 bg-white/5 shadow-[0_0_22px_rgba(255,52,145,0.1)]"
+                      }`}
+                    >
+                      <p
+                        className="font-display text-[clamp(1.8rem,min(3.4vw,4.5svh),3rem)] uppercase leading-none tracking-[-0.05em]"
+                        style={{ color: finalist.accent }}
+                      >
+                        {finalist.name}
+                      </p>
+                      {isEliminated ? (
+                        <p className="font-sans text-[0.62rem] font-semibold uppercase tracking-[0.26em] text-white/72">
+                          ELIMINATED
+                        </p>
+                      ) : (
+                        <p className="font-sans text-[0.62rem] uppercase tracking-[0.26em] text-white/40">
+                          FINALIST
+                        </p>
+                      )}
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </PresentationPage>
+  );
+}
+
+function EpisodeTenFinalFallback() {
+  return (
+    <PresentationPage className="justify-center">
+      <p className="font-sans text-xs uppercase tracking-[0.35em] text-[var(--accent-orange)]">
+        EPISODE 10
+      </p>
+      <p className="mt-3 font-display text-[clamp(3.5rem,min(8vw,11svh),7rem)] uppercase leading-[0.82] tracking-[-0.07em] text-[var(--accent-pink)]">
+        THE FINAL
+      </p>
+    </PresentationPage>
+  );
+}
 
 export function PresentationSlides({ slug }: { slug: string }) {
   const router = useRouter();
@@ -79,9 +309,9 @@ export function PresentationSlides({ slug }: { slug: string }) {
     phaseOneAdvancingDuetIds,
     setPhaseOneAdvancingDuetIds,
     finalRoundPartner,
-    finalistDuetIds,
+    finalDuetIds,
     setFinalRoundPartner,
-    setFinalistDuetIds,
+    setFinalDuetIds,
     resetSpinExperience,
     resetOpponentSpinExperience,
     resetFinalEpisodeExperience,
@@ -91,6 +321,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
   const [superstarVisible, setSuperstarVisible] = useState(false);
   const [spinPlaybackError, setSpinPlaybackError] = useState<string | null>(null);
   const [isSpinPlaying, setIsSpinPlaying] = useState(false);
+  const [spinMediaPhase, setSpinMediaPhase] = useState<SpinMediaPhase>("idle");
   const [opponentSpinPlaybackError, setOpponentSpinPlaybackError] = useState<string | null>(null);
   const [isOpponentSpinPlaying, setIsOpponentSpinPlaying] = useState(false);
   const [isPhaseOneAnimating, setIsPhaseOneAnimating] = useState(false);
@@ -99,6 +330,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
   const opponentVideoRef = useRef<HTMLVideoElement | null>(null);
   const phaseOneTimeoutsRef = useRef<number[]>([]);
   const finalEpisodeTimeoutsRef = useRef<number[]>([]);
+  const spinSettleTimeoutRef = useRef<number | null>(null);
   const hasResetSpinOnEntryRef = useRef(false);
   const hasResetOpponentSpinOnEntryRef = useRef(false);
   const hasResetFinalEpisodeOnEntryRef = useRef(false);
@@ -156,20 +388,20 @@ export function PresentationSlides({ slug }: { slug: string }) {
     () => new Set(finalEpisodeDuets.map((duet) => duet.id)),
     [],
   );
-  const validFinalistDuetIds = useMemo(
+  const validFinalDuetIds = useMemo(
     () =>
-      finalistDuetIds.length === 4 &&
-      finalistDuetIds.includes(finalEpisodeViewerDuetId) &&
-      finalistDuetIds.every((id) => finalEpisodeDuetIds.has(id))
-        ? finalistDuetIds
+      finalDuetIds.length === 2 &&
+      finalDuetIds.includes(finalEpisodeViewerDuetId) &&
+      finalDuetIds.every((id) => finalEpisodeDuetIds.has(id))
+        ? finalDuetIds
         : [],
-    [finalEpisodeDuetIds, finalistDuetIds],
+    [finalDuetIds, finalEpisodeDuetIds],
   );
-  const finalEpisodeFinalistSet = useMemo(
-    () => new Set(validFinalistDuetIds),
-    [validFinalistDuetIds],
+  const finalEpisodeAdvancingSet = useMemo(
+    () => new Set(validFinalDuetIds),
+    [validFinalDuetIds],
   );
-  const finalEpisodeRevealComplete = validFinalistDuetIds.length === 4;
+  const finalEpisodeRevealComplete = validFinalDuetIds.length === 2;
   const proofCardAccentClass = proofIndex === 0
     ? "from-[var(--accent-orange)]/22 via-[var(--accent-pink)]/12 to-[var(--accent-cyan)]/18"
     : proofIndex === 1
@@ -179,9 +411,15 @@ export function PresentationSlides({ slug }: { slug: string }) {
   const handleSpinReplay = useCallback(() => {
     const video = videoRef.current;
 
+    if (spinSettleTimeoutRef.current !== null) {
+      window.clearTimeout(spinSettleTimeoutRef.current);
+      spinSettleTimeoutRef.current = null;
+    }
+
     resetSpinExperience();
     setSpinPlaybackError(null);
     setIsSpinPlaying(false);
+    setSpinMediaPhase("idle");
     setPhaseOneAdvancingDuetIds([]);
 
     if (video) {
@@ -189,6 +427,14 @@ export function PresentationSlides({ slug }: { slug: string }) {
       video.currentTime = 0;
     }
   }, [resetSpinExperience, setPhaseOneAdvancingDuetIds]);
+
+  useEffect(() => {
+    return () => {
+      if (spinSettleTimeoutRef.current !== null) {
+        window.clearTimeout(spinSettleTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!hasHydratedStorage) {
@@ -216,8 +462,21 @@ export function PresentationSlides({ slug }: { slug: string }) {
 
     if (!selectedOpponent) {
       router.replace("/opponent-spin");
+      return;
     }
-  }, [hasHydratedStorage, resolvedSelectedPartner, router, selectedOpponent, slug]);
+
+    if (performanceStyle !== opponentSelectedSong) {
+      setPerformanceStyle(opponentSelectedSong);
+    }
+  }, [
+    hasHydratedStorage,
+    performanceStyle,
+    resolvedSelectedPartner,
+    router,
+    selectedOpponent,
+    setPerformanceStyle,
+    slug,
+  ]);
 
   useEffect(() => {
     if (!hasHydratedStorage || slug !== "duel-result") {
@@ -234,8 +493,8 @@ export function PresentationSlides({ slug }: { slug: string }) {
       return;
     }
 
-    if (!performanceStyle) {
-      router.replace("/duel");
+    if (performanceStyle !== opponentSelectedSong) {
+      setPerformanceStyle(opponentSelectedSong);
     }
   }, [
     hasHydratedStorage,
@@ -243,6 +502,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
     resolvedSelectedPartner,
     router,
     selectedOpponent,
+    setPerformanceStyle,
     slug,
   ]);
 
@@ -282,7 +542,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
       }
 
       if (superstarVisible) {
-        router.push("/winner");
+        router.push("/the-final?stage=showdown");
         return;
       }
 
@@ -305,6 +565,12 @@ export function PresentationSlides({ slug }: { slug: string }) {
 
     hasResetSpinOnEntryRef.current = true;
     resetSpinExperience();
+    setSpinMediaPhase("idle");
+
+    if (spinSettleTimeoutRef.current !== null) {
+      window.clearTimeout(spinSettleTimeoutRef.current);
+      spinSettleTimeoutRef.current = null;
+    }
 
     const video = videoRef.current;
 
@@ -394,16 +660,6 @@ export function PresentationSlides({ slug }: { slug: string }) {
   }, [finalRoundPartner, hasHydratedStorage, setFinalRoundPartner, slug]);
 
   useEffect(() => {
-    if (!hasHydratedStorage || slug !== "final-four") {
-      return;
-    }
-
-    if (validFinalistDuetIds.length !== 4) {
-      router.replace("/final-spin");
-    }
-  }, [hasHydratedStorage, router, slug, validFinalistDuetIds]);
-
-  useEffect(() => {
     if (slug !== "opponent-spin") {
       hasResetOpponentSpinOnEntryRef.current = false;
       return;
@@ -462,6 +718,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
 
     setSpinPlaybackError(null);
     setIsSpinPlaying(true);
+    setSpinMediaPhase("spinning");
     setFirstWheelSpun(false);
     setSpinVideoPlayed(false);
     setSingerRevealed(false);
@@ -472,6 +729,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
       await video.play();
     } catch {
       setIsSpinPlaying(false);
+      setSpinMediaPhase("idle");
       setSpinPlaybackError("Playback was interrupted. Tap spin again.");
     }
   };
@@ -484,6 +742,16 @@ export function PresentationSlides({ slug }: { slug: string }) {
     setFirstWheelSpun(true);
     setSpinVideoPlayed(true);
     setSingerRevealed(false);
+    setSpinMediaPhase("settling");
+
+    if (spinSettleTimeoutRef.current !== null) {
+      window.clearTimeout(spinSettleTimeoutRef.current);
+    }
+
+    spinSettleTimeoutRef.current = window.setTimeout(() => {
+      setSpinMediaPhase("clue");
+      spinSettleTimeoutRef.current = null;
+    }, 650);
   };
 
   const handleRevealSinger = () => {
@@ -561,6 +829,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
     setSelectedOpponent(randomOpponent);
     setOpponentSpinVideoPlayed(true);
     setOpponentRevealed(true);
+    setPerformanceStyle(opponentSelectedSong);
   };
 
   const handleFinalEpisodePerform = useCallback(() => {
@@ -571,20 +840,10 @@ export function PresentationSlides({ slug }: { slug: string }) {
     finalEpisodeTimeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
     finalEpisodeTimeoutsRef.current = [];
     setIsFinalEpisodeAnimating(true);
-    setFinalistDuetIds([]);
+    setFinalDuetIds([]);
 
     const revealTimeout = window.setTimeout(() => {
-      const otherDuetIds = finalEpisodeDuets
-        .filter((duet) => duet.id !== finalEpisodeViewerDuetId)
-        .map((duet) => duet.id);
-      const shuffledIds = [...otherDuetIds];
-
-      for (let index = shuffledIds.length - 1; index > 0; index -= 1) {
-        const swapIndex = Math.floor(Math.random() * (index + 1));
-        [shuffledIds[index], shuffledIds[swapIndex]] = [shuffledIds[swapIndex], shuffledIds[index]];
-      }
-
-      setFinalistDuetIds([finalEpisodeViewerDuetId, ...shuffledIds.slice(0, 3)]);
+      setFinalDuetIds([finalEpisodeViewerDuetId, finalEpisodeSecondFinalistId]);
     }, 900);
 
     const completeTimeout = window.setTimeout(() => {
@@ -592,7 +851,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
     }, 1450);
 
     finalEpisodeTimeoutsRef.current = [revealTimeout, completeTimeout];
-  }, [finalEpisodeRevealComplete, isFinalEpisodeAnimating, setFinalistDuetIds]);
+  }, [finalEpisodeRevealComplete, isFinalEpisodeAnimating, setFinalDuetIds]);
 
   if (slug === "home") {
     return (
@@ -705,7 +964,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
             <SectionLabel accent="black">Problem</SectionLabel>
             <OversizedHeading lines={["PROBLEM:"]} accent="black" className="mt-3 !text-[clamp(3.5rem,min(9vw,11svh),7rem)]" />
             <div className="mt-5 space-y-2">
-              {formatCopy.problemLines.map((line, index) => (
+              {problemPageCopy.lines.map((line, index) => (
                 <p
                   key={line}
                   className="sequence-reveal font-display text-[clamp(1.75rem,min(4vw,6svh),3.8rem)] uppercase leading-[0.92] tracking-[-0.05em]"
@@ -716,7 +975,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
               ))}
             </div>
             <p className="mt-5 self-start font-sans text-sm font-semibold uppercase tracking-[0.28em] text-white drop-shadow-[0_0_14px_rgba(255,255,255,0.16)]">
-              {formatCopy.problemNote}
+              {problemPageCopy.note}
             </p>
           </div>
           <div className="flex items-center justify-center lg:justify-end">
@@ -805,19 +1064,19 @@ export function PresentationSlides({ slug }: { slug: string }) {
     return (
       <PresentationPage className="justify-center" scrollable>
         <div className="relative flex min-h-0 flex-1 items-center overflow-hidden">
-          <div className="pointer-events-none absolute inset-y-[8%] left-[-8%] right-[28%] overflow-hidden md:right-[34%] lg:right-[38%]">
+          <div className="pointer-events-none absolute inset-y-[8%] left-[-8%] right-[20%] overflow-hidden md:right-[26%] lg:right-[31%]">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(255,52,145,0.18),transparent_34%)] blur-2xl" />
             <Image
               src="/wheel.png"
               alt="Roulette wheel stage"
               fill
               priority
-              sizes="(max-width: 1024px) 100vw, 60vw"
-              className="object-cover object-left-center"
+              sizes="(max-width: 1024px) 100vw, 70vw"
+              className="object-cover object-[42%_44%] brightness-[1.15] contrast-[1.08]"
             />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0)_35%,rgba(0,0,0,0.42)_58%,rgba(0,0,0,0.92)_100%),linear-gradient(180deg,rgba(0,0,0,0.24),rgba(0,0,0,0.58)_82%,rgba(0,0,0,0.78))]" />
-            <div className="absolute inset-y-0 right-0 w-[18%] bg-[linear-gradient(90deg,rgba(0,0,0,0),rgba(0,0,0,0.92))]" />
-            <div className="absolute inset-y-0 left-0 w-[10%] bg-[linear-gradient(90deg,rgba(0,0,0,0.9),rgba(0,0,0,0))]" />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0)_35%,rgba(0,0,0,0.32)_58%,rgba(0,0,0,0.86)_100%),linear-gradient(180deg,rgba(0,0,0,0.14),rgba(0,0,0,0.42)_82%,rgba(0,0,0,0.64))]" />
+            <div className="absolute inset-y-0 right-0 w-[18%] bg-[linear-gradient(90deg,rgba(0,0,0,0),rgba(0,0,0,0.86))]" />
+            <div className="absolute inset-y-0 left-0 w-[10%] bg-[linear-gradient(90deg,rgba(0,0,0,0.72),rgba(0,0,0,0))]" />
           </div>
           <div className="relative z-10 ml-auto w-full max-w-full overflow-visible py-[clamp(1rem,4svh,3rem)] pr-4 sm:pr-6 lg:max-w-[42rem] lg:pr-8">
             <SectionLabel accent="orange">Center Stage</SectionLabel>
@@ -843,18 +1102,33 @@ export function PresentationSlides({ slug }: { slug: string }) {
   if (slug === "contestant") {
     return (
       <PresentationPage className="justify-center">
-        <div className="max-w-5xl">
-          <SectionLabel accent="cyan">{formatCopy.contestant.eyebrow}</SectionLabel>
-          <OversizedHeading
-            lines={["YOU ARE ONE", "OF THE", "CONTESTANTS"]}
-            className="mt-4 !text-[clamp(3.7rem,min(11vw,15svh),9rem)]"
-          />
-          <p className="mt-5 max-w-2xl font-sans text-[clamp(1rem,2.2svh,1.25rem)] leading-[1.55] text-white">
-            Congratulations. You’ve made it through our audition process and you’re one of our contestants. You obviously have the voice, but now chance decides your partner.
-          </p>
-          <ArrowButton onClick={() => router.push("/spin")} className="mt-6">
-            SPIN THE WHEEL
-          </ArrowButton>
+        <div className="grid min-h-0 flex-1 items-center gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(22rem,0.92fr)] lg:gap-10 xl:grid-cols-[minmax(0,0.83fr)_minmax(0,1.17fr)]">
+          <div className="max-w-5xl">
+            <SectionLabel accent="cyan">{formatCopy.contestant.eyebrow}</SectionLabel>
+            <OversizedHeading
+              lines={["YOU ARE ONE", "OF THE", "CONTESTANTS"]}
+              className="mt-4 !text-[clamp(3.4rem,min(7.4vw,12svh),7.5rem)]"
+            />
+            <p className="mt-5 max-w-2xl font-sans text-[clamp(1rem,2.2svh,1.25rem)] leading-[1.55] text-white">
+              Congratulations. You’ve made it through our audition process and you’re one of our contestants. You obviously have the voice, but now chance decides your partner.
+            </p>
+            <ArrowButton onClick={() => router.push("/spin")} className="mt-6">
+              STEP UP TO THE WHEEL
+            </ArrowButton>
+          </div>
+          <div className="flex min-h-0 items-center justify-center lg:justify-end">
+            <div className="w-full max-w-[55rem] overflow-hidden rounded-[2rem] border border-[var(--accent-pink)]/30 bg-[linear-gradient(135deg,rgba(255,52,145,0.12),rgba(87,42,164,0.12),rgba(0,0,0,0.72))] p-2 shadow-[0_0_55px_rgba(175,52,255,0.22),0_24px_60px_rgba(0,0,0,0.4)]">
+              <Image
+                src="/slide7.png"
+                alt="Contestant facing the illuminated roulette stage"
+                width={1180}
+                height={688}
+                priority
+                sizes="(max-width: 1024px) 92vw, 55vw"
+                className="h-auto max-h-[min(62svh,34rem)] w-full rounded-[1.5rem] object-contain"
+              />
+            </div>
+          </div>
         </div>
       </PresentationPage>
     );
@@ -869,46 +1143,72 @@ export function PresentationSlides({ slug }: { slug: string }) {
             <OversizedHeading lines={["SPIN", "FOR YOUR STAR"]} className="mt-3 !text-[clamp(3.2rem,min(8vw,10svh),7rem)]" />
           </div>
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(300px,0.8fr)] lg:items-center">
-            <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-black shadow-[0_26px_80px_rgba(0,0,0,0.55)]">
+            <div
+              className={`relative z-10 w-full overflow-hidden rounded-[2rem] border border-white/10 bg-black shadow-[0_26px_80px_rgba(0,0,0,0.55)] transition-[width,transform,box-shadow] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                spinMediaPhase === "spinning"
+                  ? "lg:z-20 lg:w-[min(60vw,64rem)] lg:translate-x-[3vw] lg:shadow-[0_34px_110px_rgba(0,0,0,0.72),0_0_70px_rgba(255,52,145,0.2)]"
+                  : "lg:translate-x-0"
+              }`}
+            >
               <video
                 ref={videoRef}
                 src="/roulettetest.mp4"
+                poster="/moniker.png"
                 preload="auto"
                 playsInline
                 autoPlay={false}
                 controls={false}
-                className="h-[min(36svh,22rem)] w-full object-cover"
+                className={`w-full transition-[height,opacity] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  spinMediaPhase === "spinning"
+                    ? "h-[min(56svh,34rem)] object-cover opacity-100"
+                    : `h-[min(36svh,22rem)] ${
+                        firstWheelSpun ? "object-cover" : "object-contain"
+                      } ${spinMediaPhase === "idle" ? "opacity-0" : "opacity-100"}`
+                }`}
                 onEnded={handleCelebritySpinEnded}
                 onPlay={() => {
                   setIsSpinPlaying(true);
+                  setSpinMediaPhase("spinning");
                   setSpinPlaybackError(null);
                 }}
                 onPause={() => {
                   if ((videoRef.current?.ended ?? false) === false) {
                     setIsSpinPlaying(false);
+                    setSpinMediaPhase("idle");
                   }
                 }}
                 onError={() => {
                   setIsSpinPlaying(false);
+                  setSpinMediaPhase("idle");
                   setSpinPlaybackError("The roulette video could not be played.");
                 }}
               />
+              <Image
+                src="/moniker.png"
+                alt="Roulette wheel moniker"
+                fill
+                priority
+                sizes="(max-width: 1024px) 92vw, 55vw"
+                className={`pointer-events-none object-contain transition-opacity duration-500 ease-out ${
+                  spinMediaPhase === "idle" ? "opacity-100" : "opacity-0"
+                }`}
+              />
               <div
-                className={`absolute inset-0 transition-colors duration-500 ${
+                className={`pointer-events-none absolute inset-0 transition-colors duration-500 ${
                   firstWheelSpun ? "bg-black/55" : "bg-transparent"
                 }`}
               />
-              {spinVideoPlayed && resolvedSelectedPartner ? (
-                <div className="absolute inset-0 flex items-center justify-center p-6">
+              {spinVideoPlayed && resolvedSelectedPartner && spinMediaPhase === "clue" ? (
+                <div className="absolute inset-0 flex items-center justify-center p-[clamp(1rem,3.5cqw,2rem)] [container-type:inline-size]">
                   {!singerRevealed ? (
-                    <div className="sequence-reveal text-center">
-                      <p className="font-display text-[clamp(2.8rem,6vw,5.8rem)] uppercase leading-[0.86] tracking-[-0.06em] text-white">
+                    <div className="sequence-reveal flex h-full w-full flex-col items-center justify-center text-center">
+                      <p className="w-full font-display text-[clamp(1.75rem,min(7.25cqw,5.5svh),3.75rem)] uppercase leading-[1.15] tracking-[-0.045em] text-white">
                         <span className="block">{resolvedSelectedPartner.clue[0]}</span>
-                        <span className="mt-2 block text-[var(--accent-pink)]">
+                        <span className="mt-[0.22em] block text-[var(--accent-pink)]">
                           {resolvedSelectedPartner.clue[1]}
                         </span>
                       </p>
-                      <ArrowButton onClick={handleRevealSinger} className="mt-8">
+                      <ArrowButton onClick={handleRevealSinger} className="mt-[clamp(1.25rem,3svh,2rem)] shrink-0">
                         REVEAL THE SINGER
                       </ArrowButton>
                     </div>
@@ -956,7 +1256,13 @@ export function PresentationSlides({ slug }: { slug: string }) {
                 </div>
               ) : null}
             </div>
-            <div className="grid gap-5">
+            <div
+              className={`grid gap-5 transition-[opacity,transform] duration-500 ease-out ${
+                spinMediaPhase === "spinning"
+                  ? "pointer-events-none scale-[0.98] opacity-25"
+                  : "scale-100 opacity-100"
+              }`}
+            >
               <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6">
                 <p className="font-sans text-xs uppercase tracking-[0.35em] text-white/48">
                   Live Roulette
@@ -977,16 +1283,19 @@ export function PresentationSlides({ slug }: { slug: string }) {
                   </p>
                 ) : null}
               </div>
-              {spinVideoPlayed && resolvedSelectedPartner && !singerRevealed ? (
+              {spinVideoPlayed &&
+              resolvedSelectedPartner &&
+              spinMediaPhase === "clue" &&
+              !singerRevealed ? (
                 <div className="rounded-[2rem] border border-[var(--accent-pink)]/20 bg-[var(--accent-pink)]/10 p-6">
                   <p className="font-sans text-xs uppercase tracking-[0.35em] text-white/48">
                     Selected Clue
                   </p>
-                  <p className="mt-4 font-display text-3xl uppercase leading-[0.9] tracking-[-0.05em] text-[var(--accent-pink)]">
-                    {resolvedSelectedPartner.clue[0]}
-                  </p>
-                  <p className="mt-2 font-display text-3xl uppercase leading-[0.9] tracking-[-0.05em] text-white">
-                    {resolvedSelectedPartner.clue[1]}
+                  <p className="mt-4 font-display text-[clamp(1.5rem,2.2vw,1.875rem)] uppercase leading-[0.96] tracking-[-0.04em]">
+                    <span className="block text-white">{resolvedSelectedPartner.clue[0]}</span>
+                    <span className="mt-2 block text-[var(--accent-pink)]">
+                      {resolvedSelectedPartner.clue[1]}
+                    </span>
                   </p>
                 </div>
               ) : null}
@@ -1086,9 +1395,13 @@ export function PresentationSlides({ slug }: { slug: string }) {
                   {phase.number}
                 </p>
                 <p className="mt-2 font-display text-[clamp(1.7rem,4svh,2.25rem)] uppercase leading-none tracking-[-0.05em] text-white">
-                  {phase.title}
+                  {phase.number === "02" ? "DUET DUELS" : phase.title}
                 </p>
-                <p className="mt-2 font-sans text-sm text-white/68">{phase.description}</p>
+                <p className="mt-2 font-sans text-sm text-white/68">
+                  {phase.number === "02"
+                    ? "Head to Head duets. The contestants will be trained all week by their mentor and then they must spin the wheel to see who they sing head-to-head against in duet duels."
+                    : phase.description}
+                </p>
               </article>
             ))}
           </div>
@@ -1116,17 +1429,21 @@ export function PresentationSlides({ slug }: { slug: string }) {
             <p className="mt-2 font-sans text-xs uppercase tracking-[0.22em] text-white/64">
               {formatCopy.meetTheDuets.episodeLabel}
             </p>
-            <div className="mt-3 space-y-1.5">
-              {formatCopy.meetTheDuets.stats.map((stat) => (
+            <div className="mt-3 space-y-[clamp(0.65rem,1.5svh,1rem)]">
+              {[
+                "EACH EPISODE, 8 CONTESTANTS SPIN FOR A CELEBRITY DUET PARTNER.",
+                "ALL 8 DUETS PERFORM AGAINST EACH OTHER BUT ONLY THE TOP 4 ADVANCE.",
+                "BY THE END OF PHASE 1, 16 CONTESTANTS REMAIN.",
+              ].map((paragraph) => (
                 <p
-                  key={stat}
+                  key={paragraph}
                   className="font-display text-[clamp(1.35rem,min(2vw,3.5svh),1.9rem)] uppercase leading-[0.98] tracking-[-0.04em] text-white"
                 >
-                  {stat}
+                  {paragraph}
                 </p>
               ))}
             </div>
-            <p className="mt-3 font-display text-[clamp(1.15rem,min(1.7vw,3svh),1.55rem)] uppercase leading-[1.02] tracking-[-0.03em] text-white">
+            <p className="mt-5 font-display text-[clamp(1.15rem,min(1.7vw,3svh),1.55rem)] font-semibold uppercase leading-[1.02] tracking-[-0.03em] text-[var(--accent-pink)]">
               {phaseOneHighlight[0]}
               <br />
               {phaseOneHighlight[1]}
@@ -1134,13 +1451,13 @@ export function PresentationSlides({ slug }: { slug: string }) {
             <ArrowButton
               onClick={
                 phaseOneRevealComplete
-                  ? () => router.push("/phase-one-result")
+                  ? () => router.push("/phase-two")
                   : handlePhaseOnePerform
               }
               disabled={isPhaseOneAnimating}
               className="mt-4"
             >
-              {phaseOneRevealComplete ? "CONTINUE" : "PERFORM"}
+              {phaseOneRevealComplete ? "PHASE 2" : "PERFORM"}
             </ArrowButton>
           </div>
           <div className="grid grid-cols-4 gap-3 lg:gap-4">
@@ -1200,54 +1517,67 @@ export function PresentationSlides({ slug }: { slug: string }) {
     );
   }
 
-  if (slug === "phase-one-result") {
-    return (
-      <PresentationPage className="justify-center">
-        <div className="max-w-4xl">
-          <div className="mb-8 h-2 w-56 overflow-hidden rounded-full bg-white/10">
-            <div className="sequence-reveal h-full w-full bg-[var(--accent-pink)]" />
-          </div>
-          <ResultReveal
-            eyebrow="THE AUDIENCE HAS VOTED..."
-            title={formatCopy.meetTheDuets.resultTitle}
-            subtitle="Across the opening episodes, each celebrity-and-contestant pairing performs together. The audience votes for the duets with the most chemistry, star power and vocal impact."
-          />
-        </div>
-      </PresentationPage>
-    );
-  }
-
   if (slug === "phase-two") {
     return (
       <PresentationPage className="justify-center">
-        <div className="max-w-5xl">
-          <SectionLabel accent="orange">02</SectionLabel>
-          <h1 className="mt-4 font-display text-[clamp(4rem,7.2vw,6.7rem)] uppercase leading-[0.84] tracking-[-0.07em] text-[var(--accent-pink)]">
-            PHASE 2
-          </h1>
-          <div className="mt-4">
-            <SectionLabel accent="orange">
-              <span className="text-[0.98rem] font-semibold tracking-[0.28em]">
-                SPIN FOR OPPONENTS
-              </span>
-            </SectionLabel>
-          </div>
-          <p className="mt-4 font-sans text-sm uppercase tracking-[0.22em] text-white/64">
-            {formatCopy.duelDuels.episodeLabel}
-          </p>
-          <div className="mt-6 space-y-2">
-            <p className="font-display text-[clamp(2rem,3.2vw,3rem)] uppercase leading-[0.96] tracking-[-0.05em] text-white">
-              16 DUETS REMAIN.
+        <div className="grid min-h-0 flex-1 gap-8 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:items-center lg:gap-10">
+          <div className="max-w-5xl">
+            <SectionLabel accent="orange">02</SectionLabel>
+            <h1 className="mt-3 font-display text-[clamp(3.4rem,min(7.2vw,9svh),6.7rem)] uppercase leading-[0.84] tracking-[-0.07em] text-[var(--accent-pink)]">
+              PHASE 2
+            </h1>
+            <div className="mt-3">
+              <SectionLabel accent="orange">
+                <span className="text-[0.98rem] font-semibold tracking-[0.28em]">
+                  DUET DUELS
+                </span>
+              </SectionLabel>
+            </div>
+            <p className="mt-3 font-sans text-sm uppercase tracking-[0.22em] text-white/64">
+              {formatCopy.duelDuels.episodeLabel}
             </p>
-            <p className="font-display text-[clamp(2rem,3.2vw,3rem)] uppercase leading-[0.96] tracking-[-0.05em] text-white">
-              NOW THE CONTESTANTS
-              <br />
-              ENTER THE WHEEL.
-            </p>
+            <div className="mt-4 space-y-[clamp(0.35rem,1svh,0.7rem)]">
+              <p className="font-display text-[clamp(1.35rem,min(2.5vw,3.7svh),2.35rem)] uppercase leading-[0.94] tracking-[-0.04em] text-white">
+                THE LOWEST-VOTED
+                <br />
+                CONTESTANT FROM PHASE 1
+                <br />
+                SPINS THE WHEEL.
+              </p>
+              <p className="font-display text-[clamp(1.35rem,min(2.5vw,3.7svh),2.35rem)] uppercase leading-[0.94] tracking-[-0.04em] text-white">
+                THE WHEEL DECIDES
+                <br />
+                WHO THEY FACE.
+              </p>
+              <p className="font-display text-[clamp(1.35rem,min(2.5vw,3.7svh),2.35rem)] uppercase leading-[0.94] tracking-[-0.04em] text-white">
+                THE CONTESTANT IT LANDS ON
+                <br />
+                CHOOSES THE SONG.
+              </p>
+              <p className="font-display text-[clamp(1.35rem,min(2.5vw,3.7svh),2.35rem)] uppercase leading-[0.94] tracking-[-0.04em] text-white">
+                TWO DUETS PERFORM.
+              </p>
+              <p className="font-display text-[clamp(1.35rem,min(2.5vw,3.7svh),2.35rem)] uppercase leading-[0.94] tracking-[-0.04em] text-[var(--accent-pink)]">
+                ONLY ONE SURVIVES.
+              </p>
+            </div>
+            <ArrowButton onClick={() => router.push("/opponent-spin")} className="mt-5">
+              SPIN FOR YOUR OPPONENT
+            </ArrowButton>
           </div>
-          <ArrowButton onClick={() => router.push("/opponent-spin")} className="mt-8">
-            SPIN FOR YOUR OPPONENT
-          </ArrowButton>
+          <div className="flex min-h-0 items-center justify-center lg:justify-end xl:-translate-x-3">
+            <div className="w-full max-w-[54rem] overflow-hidden rounded-[2rem] border border-[var(--accent-pink)]/30 bg-[linear-gradient(135deg,rgba(255,52,145,0.12),rgba(87,42,164,0.12),rgba(0,0,0,0.72))] p-2 shadow-[0_0_55px_rgba(175,52,255,0.22),0_24px_60px_rgba(0,0,0,0.4)]">
+              <Image
+                src="/phase2.png"
+                alt="Duet performers facing off on the illuminated stage"
+                width={3326}
+                height={1204}
+                priority
+                sizes="(max-width: 1024px) 92vw, 58vw"
+                className="h-auto max-h-[min(58svh,32rem)] w-full rounded-[1.5rem] object-contain"
+              />
+            </div>
+          </div>
         </div>
       </PresentationPage>
     );
@@ -1295,15 +1625,13 @@ export function PresentationSlides({ slug }: { slug: string }) {
                 <div className="absolute inset-0 flex items-center justify-center p-6">
                   <div className="sequence-reveal text-center">
                     <p className="font-sans text-xs uppercase tracking-[0.35em] text-white/65">
-                      YOUR OPPONENT IS...
+                      THE WHEEL HAS CHOSEN...
                     </p>
                     <p className="mt-4 font-display text-[clamp(3rem,7vw,6.4rem)] uppercase leading-[0.86] tracking-[-0.06em] text-[var(--accent-pink)]">
                       {selectedOpponent.fullLabel}
                     </p>
                     <p className="mt-5 font-display text-[clamp(1.6rem,3.2vw,2.5rem)] uppercase leading-[0.9] tracking-[-0.04em] text-white">
-                      HEAD-TO-HEAD DUET.
-                      <br />
-                      ONLY ONE PAIR SURVIVES.
+                      THEY CHOOSE THE SONG.
                     </p>
                     <ArrowButton onClick={() => router.push("/duel")} className="mt-8">
                       SEE THE DUEL
@@ -1315,17 +1643,19 @@ export function PresentationSlides({ slug }: { slug: string }) {
             <div className="grid gap-5">
               <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6">
                 <p className="font-sans text-xs font-semibold uppercase tracking-[0.35em] text-[var(--accent-orange)]">
-                  HEAD-TO-HEAD DUETS
+                  DUET DUELS
                 </p>
-                <p className="mt-4 max-w-sm font-sans text-base leading-7 text-white/72">
-                  The wheel decides which surviving duet you face.
-                </p>
-                <div className="mt-6 space-y-2">
-                  <p className="font-display text-3xl uppercase leading-[0.9] tracking-[-0.05em] text-white">
-                    TWO DUETS PERFORM.
+                <div className="mt-4 space-y-3">
+                  <p className="font-display text-[clamp(1.45rem,2.2vw,2rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
+                    THE LOWEST-VOTED CONTESTANT SPINS.
                   </p>
-                  <p className="font-display text-3xl uppercase leading-[0.9] tracking-[-0.05em] text-[var(--accent-pink)]">
-                    ONLY ONE SURVIVES.
+                  <p className="font-display text-[clamp(1.45rem,2.2vw,2rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
+                    THE WHEEL DECIDES WHO THEY FACE.
+                  </p>
+                  <p className="font-display text-[clamp(1.45rem,2.2vw,2rem)] uppercase leading-[0.92] tracking-[-0.04em] text-[var(--accent-pink)]">
+                    THE CONTESTANT IT LANDS ON
+                    <br />
+                    CHOOSES THE SONG.
                   </p>
                 </div>
                 <ArrowButton
@@ -1360,46 +1690,40 @@ export function PresentationSlides({ slug }: { slug: string }) {
     return (
       <PresentationPage className="justify-center">
         <div className="grid gap-8">
-          <div className="grid gap-6 rounded-[2rem] border border-white/10 bg-white/5 p-6 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
-            <p className="font-display text-[clamp(2.8rem,5vw,5rem)] uppercase leading-none tracking-[-0.05em] text-[var(--accent-pink)]">
+          <div className="grid gap-6 rounded-[2rem] border border-white/10 bg-white/5 p-6 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:items-center">
+            <p className="flex min-h-[clamp(5rem,14svh,8rem)] min-w-0 items-center justify-center px-2 text-center font-display text-[clamp(2.8rem,5vw,5rem)] uppercase leading-none tracking-[-0.05em] text-[var(--accent-pink)]">
               {duetPairingLabel}
             </p>
             <p className="font-display text-4xl uppercase tracking-[-0.05em] text-white/60">
               VERSUS
             </p>
-            <p className="font-display text-[clamp(2.8rem,5vw,5rem)] uppercase leading-none tracking-[-0.05em] text-[var(--accent-orange)]">
+            <p className="flex min-h-[clamp(5rem,14svh,8rem)] min-w-0 items-center justify-center px-2 text-center font-display text-[clamp(2.8rem,5vw,5rem)] uppercase leading-none tracking-[-0.05em] text-[var(--accent-orange)]">
               {selectedOpponent.fullLabel}
             </p>
           </div>
-          <p className="font-display text-4xl uppercase leading-none tracking-[-0.05em] text-white">
+          <p className="font-display text-[clamp(1.8rem,3.2vw,2.5rem)] uppercase leading-[0.94] tracking-[-0.05em] text-white">
             ONE SONG.
             <br />
             TWO DUETS.
             <br />
             ONLY ONE SURVIVES.
           </p>
-          <div className="flex flex-wrap gap-3">
-            {formatCopy.duelDuels.styles.map((style) => (
-              <button
-                key={style}
-                type="button"
-                onClick={() => setPerformanceStyle(style)}
-                className={`rounded-full border px-5 py-3 font-sans text-sm font-semibold uppercase tracking-[0.22em] transition-all ${
-                  performanceStyle === style
-                    ? "border-[var(--accent-pink)] bg-[var(--accent-pink)] text-black"
-                    : "border-white/15 bg-white/5 text-white hover:border-white/35"
-                }`}
-              >
-                {style}
-              </button>
-            ))}
+          <div className="w-fit rounded-[1.5rem] border border-[var(--accent-pink)]/30 bg-[var(--accent-pink)]/10 px-6 py-4">
+            <p className="font-sans text-xs font-semibold uppercase tracking-[0.32em] text-white/55">
+              THEY CHOOSE:
+            </p>
+            <p className="mt-2 font-display text-[clamp(2.4rem,5vw,4rem)] uppercase leading-none tracking-[-0.05em] text-[var(--accent-pink)]">
+              {opponentSelectedSong}
+            </p>
           </div>
           <ArrowButton
-            onClick={() => router.push("/duel-result")}
-            disabled={!performanceStyle}
+            onClick={() => {
+              setPerformanceStyle(opponentSelectedSong);
+              router.push("/duel-result");
+            }}
             className="w-fit"
           >
-            TAKE THE STAGE
+            PERFORM
           </ArrowButton>
         </div>
       </PresentationPage>
@@ -1411,28 +1735,28 @@ export function PresentationSlides({ slug }: { slug: string }) {
       return null;
     }
 
-    if (!resolvedSelectedPartner || !selectedOpponent || !performanceStyle) {
+    if (!resolvedSelectedPartner || !selectedOpponent) {
       return null;
     }
 
     return (
       <PresentationPage className="justify-center">
         <div className="max-w-4xl">
-          <div className="mb-8 grid gap-4 rounded-[2rem] border border-white/10 bg-white/5 p-6 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
-            <p className="font-display text-[clamp(2.5rem,5vw,4.8rem)] uppercase leading-none tracking-[-0.05em] text-[var(--accent-pink)]">
+          <div className="mb-8 grid gap-4 rounded-[2rem] border border-white/10 bg-white/5 p-6 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:items-center">
+            <p className="flex min-h-[clamp(4.5rem,12svh,7rem)] min-w-0 items-center justify-center px-2 text-center text-balance font-display text-[clamp(2.5rem,5vw,4.8rem)] uppercase leading-[0.9] tracking-[-0.05em] text-[var(--accent-pink)]">
               {duetPairingLabel}
             </p>
-            <p className="font-display text-4xl uppercase tracking-[-0.05em] text-white/60">
+            <p className="text-center font-display text-4xl uppercase tracking-[-0.05em] text-white/60">
               VERSUS
             </p>
-            <p className="font-display text-[clamp(2.5rem,5vw,4.8rem)] uppercase leading-none tracking-[-0.05em] text-[var(--accent-orange)]">
+            <p className="flex min-h-[clamp(4.5rem,12svh,7rem)] min-w-0 items-center justify-center px-2 text-center text-balance font-display text-[clamp(2.5rem,5vw,4.8rem)] uppercase leading-[0.9] tracking-[-0.05em] text-[var(--accent-orange)]">
               {selectedOpponent.fullLabel}
             </p>
           </div>
           <ResultReveal
             eyebrow="THE AUDIENCE HAS VOTED..."
             title={formatCopy.duelDuels.resultTitle}
-            subtitle={formatCopy.duelDuels.body}
+            className="[&>p:first-child]:mb-4 [&>p:first-child]:text-[clamp(1rem,1.5vw,1.25rem)] [&>p:first-child]:leading-relaxed"
           />
         </div>
       </PresentationPage>
@@ -1442,32 +1766,50 @@ export function PresentationSlides({ slug }: { slug: string }) {
   if (slug === "phase-three") {
     return (
       <PresentationPage className="justify-center">
-        <div className="max-w-5xl">
-          <SectionLabel accent="cyan">PHASE 3</SectionLabel>
-          <OversizedHeading lines={["FATE OF THE", "FINAL EIGHT"]} className="mt-4 !text-[clamp(3.5rem,min(9vw,11svh),7rem)]" />
-          <p className="mt-4 font-sans text-sm uppercase tracking-[0.22em] text-white/64">
-            EPISODE 9
-          </p>
-          <div className="mt-5 space-y-1">
-            {[
-              "8 CONTESTANTS REMAIN.",
-              "EACH PERFORMER SPINS",
-              "FOR A NEW CELEBRITY PARTNER.",
-              "ALL 8 DUETS PERFORM.",
-              "ONLY THE TOP 4 ADVANCE",
-              "TO THE FINAL.",
-            ].map((line) => (
-              <p
-                key={line}
-                className="font-display text-[clamp(1.75rem,min(3.3vw,5.2svh),3.25rem)] uppercase leading-[0.92] tracking-[-0.05em] text-white"
-              >
-                {line}
-              </p>
-            ))}
+        <div className="grid min-h-0 flex-1 gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)] lg:items-center lg:gap-10">
+          <div className="max-w-5xl">
+            <SectionLabel accent="cyan">PHASE 3</SectionLabel>
+            <OversizedHeading lines={["FATE OF THE", "FINAL EIGHT"]} className="mt-4 !text-[clamp(3.5rem,min(9vw,11svh),7rem)]" />
+            <p className="mt-4 font-sans text-sm uppercase tracking-[0.22em] text-white/64">
+              EPISODE 9
+            </p>
+            <div className="mt-5 space-y-1">
+              {[
+                ["8 CONTESTANTS REMAIN."],
+                ["THEY SPIN TO DISCOVER", "THEIR NEW PARTNER."],
+                ["THEY TEAM UP", "AND PERFORM AS DUETS."],
+                ["FOUR DUETS COMPETE."],
+                ["ONLY TWO DUETS", "GO THROUGH TO THE FINAL."],
+              ].map((lines) => (
+                <p
+                  key={lines.join(" ")}
+                  className="font-display text-[clamp(1.75rem,min(3.3vw,5.2svh),3.25rem)] uppercase leading-[0.92] tracking-[-0.05em] text-white"
+                >
+                  {lines.map((line) => (
+                    <span key={line} className="block">
+                      {line}
+                    </span>
+                  ))}
+                </p>
+              ))}
+            </div>
+            <ArrowButton onClick={() => router.push("/final-spin")} className="mt-5">
+              SEE WHO YOU SPUN
+            </ArrowButton>
           </div>
-          <ArrowButton onClick={() => router.push("/final-spin")} className="mt-5">
-            SEE WHO YOU SPUN
-          </ArrowButton>
+          <div className="flex min-h-0 items-center justify-center lg:justify-end">
+            <div className="w-full max-w-[min(34rem,58svh)] overflow-hidden rounded-[2rem] border border-[var(--accent-pink)]/30 bg-[linear-gradient(135deg,rgba(255,52,145,0.14),rgba(87,42,164,0.12),rgba(0,0,0,0.7))] p-2 shadow-[0_0_55px_rgba(175,52,255,0.22)] xl:-translate-x-[6.5rem]">
+              <Image
+                src="/duetb.png"
+                alt="Two contestants performing together under pink stage lights"
+                width={1200}
+                height={1200}
+                priority
+                sizes="(max-width: 1024px) 82vw, 42vw"
+                className="h-auto w-full rounded-[1.5rem] object-contain"
+              />
+            </div>
+          </div>
         </div>
       </PresentationPage>
     );
@@ -1491,31 +1833,17 @@ export function PresentationSlides({ slug }: { slug: string }) {
               YOUR NEW DUET PARTNER
             </p>
 
-            <div className="mt-4 max-w-[24rem]">
-              <div className="overflow-hidden rounded-[2rem] border border-white/15 bg-[linear-gradient(135deg,rgba(255,52,145,0.16),rgba(0,0,0,0.18)_42%,rgba(0,0,0,0.78))] p-2 shadow-[0_0_42px_rgba(255,52,145,0.22)]">
-                <div className="overflow-hidden rounded-[1.5rem] border border-white/10 bg-black/30">
-                  <Image
-                    src="/sting.png"
-                    alt="Sting"
-                    width={5792}
-                    height={8688}
-                    sizes="(max-width: 1024px) 92vw, 30rem"
-                    className="h-[min(30svh,15rem)] w-full object-cover object-[center_20%]"
-                    priority
-                  />
-                </div>
-              </div>
-            </div>
-
             <div className="mt-4 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
               <p className="font-sans text-xs uppercase tracking-[0.35em] text-white/50">
                 EPISODE 9
               </p>
               <p className="mt-2 font-display text-[clamp(1.5rem,min(2.6vw,4svh),2.5rem)] uppercase leading-[0.92] tracking-[-0.05em] text-white">
-                8 DUETS PERFORM.
+                FOUR DUETS PERFORM.
               </p>
               <p className="mt-1 font-display text-[clamp(1.5rem,min(2.6vw,4svh),2.5rem)] uppercase leading-[0.92] tracking-[-0.05em] text-[var(--accent-pink)]">
-                ONLY 4 REACH THE FINAL.
+                ONLY TWO GO THROUGH
+                <br />
+                TO THE FINAL.
               </p>
             </div>
           </div>
@@ -1524,17 +1852,17 @@ export function PresentationSlides({ slug }: { slug: string }) {
             <p className="font-sans text-xs uppercase tracking-[0.35em] text-white/45">
               EPISODE 9 DUET GRID
             </p>
-            <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
+            <div className="mt-4 grid w-full max-w-[min(36rem,58svh)] grid-cols-2 gap-3">
               {finalEpisodeDuets.map((duet) => {
                 const isViewerDuet = duet.id === finalEpisodeViewerDuetId;
-                const isAdvancing = finalEpisodeFinalistSet.has(duet.id);
+                const isAdvancing = finalEpisodeAdvancingSet.has(duet.id);
                 const isResolved = finalEpisodeRevealComplete;
                 const isEliminated = isResolved && !isAdvancing;
 
                 return (
                   <article
                     key={duet.id}
-                    className={`relative h-[min(21svh,10rem)] overflow-hidden rounded-[1.45rem] border p-4 transition-all duration-500 ${
+                    className={`relative aspect-square overflow-hidden rounded-[1.45rem] border p-4 transition-all duration-500 ${
                       isFinalEpisodeAnimating
                         ? "scale-[0.98] border-white/25 bg-white/[0.08] opacity-80"
                         : isAdvancing
@@ -1575,13 +1903,13 @@ export function PresentationSlides({ slug }: { slug: string }) {
             <ArrowButton
               onClick={
                 finalEpisodeRevealComplete
-                  ? () => router.push("/final-four")
+                  ? () => router.push("/the-final")
                   : handleFinalEpisodePerform
               }
               disabled={isFinalEpisodeAnimating}
               className="mt-5"
             >
-              {finalEpisodeRevealComplete ? "FINAL EPISODE" : "PERFORM"}
+              {finalEpisodeRevealComplete ? "THE FINAL" : "PERFORM"}
             </ArrowButton>
           </div>
         </div>
@@ -1589,95 +1917,11 @@ export function PresentationSlides({ slug }: { slug: string }) {
     );
   }
 
-  if (slug === "final-four") {
-    if (!hasHydratedStorage) {
-      return null;
-    }
-
-    if (validFinalistDuetIds.length !== 4) {
-      return null;
-    }
-
+  if (slug === "the-final") {
     return (
-      <PresentationPage className="justify-center">
-        <div className="grid flex-1 gap-6 lg:grid-cols-[0.96fr_1.04fr] lg:items-center lg:gap-8">
-          <div className="order-2 grid grid-cols-2 gap-3 lg:order-1 lg:gap-4">
-            {finalEpisodeDuets
-              .filter((duet) => finalEpisodeFinalistSet.has(duet.id))
-              .map((duet) => (
-                <article
-                  key={duet.id}
-                  className="relative h-[min(24svh,11rem)] overflow-hidden rounded-[1.55rem] border border-[var(--accent-pink)] bg-[var(--accent-pink)]/16 p-4 shadow-[0_0_28px_rgba(255,52,145,0.24)] lg:rounded-[1.75rem] lg:p-5"
-                >
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),transparent_58%)]" />
-                  <p className="relative z-10 font-sans text-[0.62rem] uppercase tracking-[0.28em] text-white/70 lg:text-[0.68rem] lg:tracking-[0.3em]">
-                    FINALIST
-                  </p>
-                  <div className="relative z-10 mt-4 flex h-[calc(100%-2rem)] items-end">
-                    <p
-                      className="font-display text-[clamp(1.15rem,2vw,2.1rem)] uppercase leading-[0.9] tracking-[-0.05em]"
-                      style={{ color: duet.accent }}
-                    >
-                      {duet.label}
-                    </p>
-                  </div>
-                </article>
-              ))}
-          </div>
-          <div className="order-1 lg:order-2">
-            <p className="font-sans text-xs uppercase tracking-[0.35em] text-white/50">
-              EPISODE 10
-            </p>
-            <div className="mt-2">
-              {["THE", "FINAL", "FOUR"].map((line) => (
-                <p
-                  key={line}
-                  className="font-display text-[clamp(3rem,min(7vw,8svh),5.5rem)] uppercase leading-[0.82] tracking-[-0.07em] text-[var(--accent-pink)]"
-                >
-                  {line}
-                </p>
-              ))}
-            </div>
-            <div className="mt-3 space-y-[clamp(0.2rem,0.65svh,0.5rem)]">
-              <p className="font-display text-[clamp(1rem,min(1.8vw,2.6svh),1.55rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
-                <span className="text-[var(--accent-pink)]">THE FINAL FOUR</span>
-                <br />
-                PERFORM SOLO.
-              </p>
-              <p className="font-display text-[clamp(1rem,min(1.8vw,2.6svh),1.55rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
-                <span className="text-[var(--accent-pink)]">ONE SINGER</span>
-                <br />
-                <span className="text-[var(--accent-pink)]">IS ELIMINATED.</span>
-              </p>
-              <p className="font-display text-[clamp(1rem,min(1.8vw,2.6svh),1.55rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
-                THEN WE REVEAL
-                <br />
-                THE SECRET SUPERSTAR.
-              </p>
-              <p className="font-display text-[clamp(1rem,min(1.8vw,2.6svh),1.55rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
-                <span className="text-[var(--accent-pink)]">THE FINAL THREE</span>
-                <br />
-                EACH PERFORM THE DUET SONG
-                <br />
-                WITH THE SUPERSTAR.
-              </p>
-              <p className="font-display text-[clamp(1rem,min(1.8vw,2.6svh),1.55rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
-                <span className="text-[var(--accent-pink)]">ONLY ONE SINGER</span>
-                <br />
-                <span className="text-[var(--accent-pink)]">IS CHOSEN.</span>
-              </p>
-              <p className="font-display text-[clamp(1rem,min(1.8vw,2.6svh),1.55rem)] uppercase leading-[0.92] tracking-[-0.04em] text-white">
-                THE SONG IS
-                <br />
-                <span className="text-[var(--accent-pink)]">RECORDED AND RELEASED.</span>
-              </p>
-            </div>
-            <ArrowButton onClick={() => router.push("/secret-superstar")} className="mt-3">
-              REVEAL THE SUPERSTAR
-            </ArrowButton>
-          </div>
-        </div>
-      </PresentationPage>
+      <Suspense fallback={<EpisodeTenFinalFallback />}>
+        <EpisodeTenFinalSequence />
+      </Suspense>
     );
   }
 
@@ -1733,7 +1977,10 @@ export function PresentationSlides({ slug }: { slug: string }) {
                 <p className="mt-8 font-display text-3xl uppercase leading-none tracking-[-0.05em] text-white">
                   {formatCopy.superstar.question}
                 </p>
-                <ArrowButton onClick={() => router.push("/winner")} className="mt-8">
+                <ArrowButton
+                  onClick={() => router.push("/the-final?stage=showdown")}
+                  className="mt-8"
+                >
                   FIND OUT
                 </ArrowButton>
               </>
@@ -1747,19 +1994,34 @@ export function PresentationSlides({ slug }: { slug: string }) {
   if (slug === "winner") {
     return (
       <PresentationPage className="justify-center">
-        <div className="max-w-5xl">
-          {formatCopy.superstar.win.map((line, index) => (
-            <p
-              key={line}
-              className={`font-display uppercase leading-[0.88] tracking-[-0.05em] ${
-                index === 0 || index === 1
-                  ? "text-[clamp(3.2rem,8vw,7rem)] text-[var(--accent-pink)]"
-                  : "mt-2 text-[clamp(1.6rem,3vw,2.8rem)] text-white"
-              }`}
-            >
-              {line}
-            </p>
-          ))}
+        <div className="grid min-h-0 flex-1 gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(320px,1.05fr)] lg:items-center lg:gap-10">
+          <div className="max-w-3xl">
+            {formatCopy.superstar.win.map((line, index) => (
+              <p
+                key={line}
+                className={`font-display uppercase leading-[0.88] tracking-[-0.05em] ${
+                  index === 0 || index === 1
+                    ? "text-[clamp(3rem,min(6vw,9svh),6rem)] text-[var(--accent-pink)]"
+                    : "mt-2 text-[clamp(1.4rem,min(2.3vw,4svh),2.4rem)] text-white"
+                }`}
+              >
+                {line}
+              </p>
+            ))}
+          </div>
+          <div className="flex min-h-0 items-center justify-center lg:justify-end">
+            <div className="w-full max-w-[min(34rem,58svh)] overflow-hidden rounded-[2rem] border border-[var(--accent-pink)]/30 bg-[linear-gradient(135deg,rgba(255,52,145,0.14),rgba(87,42,164,0.12),rgba(0,0,0,0.7))] p-2 shadow-[0_0_55px_rgba(175,52,255,0.22)] xl:-translate-x-24">
+              <Image
+                src="/winner.png"
+                alt="The winning duet celebrating together on stage"
+                width={1200}
+                height={1200}
+                priority
+                sizes="(max-width: 1024px) 82vw, 44vw"
+                className="h-auto w-full rounded-[1.5rem] object-contain"
+              />
+            </div>
+          </div>
         </div>
       </PresentationPage>
     );

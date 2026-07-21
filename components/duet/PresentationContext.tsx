@@ -26,7 +26,8 @@ type PresentationState = {
   performanceStyle: string | null;
   phaseOneAdvancingDuetIds: string[];
   finalRoundPartner: string | null;
-  finalistDuetIds: string[];
+  finalRoundPartnerId: string | null;
+  finalDuetIds: string[];
 };
 
 type PresentationContextValue = PresentationState & {
@@ -41,7 +42,7 @@ type PresentationContextValue = PresentationState & {
   setPerformanceStyle: (value: string | null) => void;
   setPhaseOneAdvancingDuetIds: (value: string[]) => void;
   setFinalRoundPartner: (value: string | null) => void;
-  setFinalistDuetIds: (value: string[]) => void;
+  setFinalDuetIds: (value: string[]) => void;
   resetSpinExperience: () => void;
   resetOpponentSpinExperience: () => void;
   resetFinalEpisodeExperience: () => void;
@@ -54,14 +55,13 @@ const partnerDependentPaths = new Set([
   "/partner",
   "/phases",
   "/phase-one",
-  "/phase-one-result",
   "/phase-two",
   "/opponent-spin",
   "/duel",
   "/duel-result",
   "/phase-three",
   "/final-spin",
-  "/final-four",
+  "/the-final",
   "/secret-superstar",
   "/winner",
 ]);
@@ -77,7 +77,8 @@ const defaultState: PresentationState = {
   performanceStyle: null,
   phaseOneAdvancingDuetIds: [],
   finalRoundPartner: null,
-  finalistDuetIds: [],
+  finalRoundPartnerId: null,
+  finalDuetIds: [],
 };
 
 function hasLegacySelectedPartner(value: unknown) {
@@ -140,6 +141,8 @@ function normalizeState(value: unknown): PresentationState {
   const parsed = value as Partial<PresentationState> & {
     selectedPartner?: unknown;
     selectedOpponent?: unknown;
+    finalistDuetIds?: unknown;
+    finalRoundPartnerId?: unknown;
   };
   const selectedPartner =
     parsed.selectedPartner && typeof parsed.selectedPartner === "object"
@@ -149,6 +152,21 @@ function normalizeState(value: unknown): PresentationState {
         : null;
   const selectedOpponent = resolveOpponent(parsed.selectedOpponent);
 
+  const storedFinalRoundPartner =
+    typeof parsed.finalRoundPartner === "string" ? parsed.finalRoundPartner : null;
+  const finalRoundPartner =
+    storedFinalRoundPartner && ["sting", "vanessa"].includes(storedFinalRoundPartner.toLowerCase())
+      ? "VANESSA"
+      : storedFinalRoundPartner;
+  const storedFinalRoundPartnerId =
+    typeof parsed.finalRoundPartnerId === "string" ? parsed.finalRoundPartnerId : null;
+  const finalRoundPartnerId =
+    finalRoundPartner === "VANESSA" ||
+    (storedFinalRoundPartnerId &&
+      ["sting", "vanessa"].includes(storedFinalRoundPartnerId.toLowerCase()))
+      ? "vanessa"
+      : storedFinalRoundPartnerId;
+
   return {
     ...defaultState,
     ...parsed,
@@ -157,11 +175,17 @@ function normalizeState(value: unknown): PresentationState {
     phaseOneAdvancingDuetIds: Array.isArray(parsed.phaseOneAdvancingDuetIds)
       ? parsed.phaseOneAdvancingDuetIds.filter((value): value is string => typeof value === "string")
       : [],
-    finalRoundPartner:
-      typeof parsed.finalRoundPartner === "string" ? parsed.finalRoundPartner : null,
-    finalistDuetIds: Array.isArray(parsed.finalistDuetIds)
-      ? parsed.finalistDuetIds.filter((value): value is string => typeof value === "string")
-      : [],
+    finalRoundPartner,
+    finalRoundPartnerId,
+    finalDuetIds: (
+      Array.isArray(parsed.finalDuetIds)
+        ? parsed.finalDuetIds
+        : Array.isArray(parsed.finalistDuetIds)
+          ? parsed.finalistDuetIds
+          : []
+    )
+      .filter((value): value is string => typeof value === "string")
+      .map((value) => value.replace(/sting/gi, "vanessa")),
   };
 }
 
@@ -298,11 +322,15 @@ export function PresentationProvider({
   }, []);
 
   const setFinalRoundPartner = useCallback((finalRoundPartner: string | null) => {
-    setState((current) => ({ ...current, finalRoundPartner }));
+    setState((current) => ({
+      ...current,
+      finalRoundPartner,
+      finalRoundPartnerId: finalRoundPartner === "VANESSA" ? "vanessa" : null,
+    }));
   }, []);
 
-  const setFinalistDuetIds = useCallback((finalistDuetIds: string[]) => {
-    setState((current) => ({ ...current, finalistDuetIds }));
+  const setFinalDuetIds = useCallback((finalDuetIds: string[]) => {
+    setState((current) => ({ ...current, finalDuetIds }));
   }, []);
 
   const resetSpinExperience = useCallback(() => {
@@ -329,7 +357,8 @@ export function PresentationProvider({
     setState((current) => ({
       ...current,
       finalRoundPartner: null,
-      finalistDuetIds: [],
+      finalRoundPartnerId: null,
+      finalDuetIds: [],
     }));
   }, []);
 
@@ -351,7 +380,7 @@ export function PresentationProvider({
       setPerformanceStyle,
       setPhaseOneAdvancingDuetIds,
       setFinalRoundPartner,
-      setFinalistDuetIds,
+      setFinalDuetIds,
       resetSpinExperience,
       resetOpponentSpinExperience,
       resetFinalEpisodeExperience,
@@ -364,7 +393,7 @@ export function PresentationProvider({
       resetOpponentSpinExperience,
       resetSpinExperience,
       setFinalRoundPartner,
-      setFinalistDuetIds,
+      setFinalDuetIds,
       setFirstWheelSpun,
       setOpponentRevealed,
       setOpponentSpinVideoPlayed,

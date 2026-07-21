@@ -20,13 +20,14 @@ const hiddenGlobalNextRoutes = new Set([
   "/opponent-spin",
   "/duel",
   "/final-spin",
-  "/final-four",
+  "/the-final",
   "/secret-superstar",
   "/finale",
 ]);
 
 const alwaysLockedForwardRoutes = new Set([
   "/proof",
+  "/the-final",
   "/secret-superstar",
 ]);
 
@@ -34,14 +35,13 @@ const partnerBadgeRoutes = new Set([
   "/partner",
   "/phases",
   "/phase-one",
-  "/phase-one-result",
   "/phase-two",
   "/opponent-spin",
   "/duel",
   "/duel-result",
   "/phase-three",
   "/final-spin",
-  "/final-four",
+  "/the-final",
   "/secret-superstar",
   "/winner",
 ]);
@@ -60,17 +60,15 @@ export function PresentationShell({
     spinVideoPlayed,
     singerRevealed,
     opponentRevealed,
-    performanceStyle,
     phaseOneAdvancingDuetIds,
-    finalistDuetIds,
+    finalDuetIds,
   } = usePresentation();
   const keyboardForwardBlocked =
     alwaysLockedForwardRoutes.has(pathname) ||
     (pathname === "/spin" && !singerRevealed) ||
     (pathname === "/phase-one" && phaseOneAdvancingDuetIds.length !== 4) ||
     (pathname === "/opponent-spin" && !opponentRevealed) ||
-    (pathname === "/duel" && !performanceStyle) ||
-    (pathname === "/final-spin" && finalistDuetIds.length !== 4);
+    (pathname === "/final-spin" && finalDuetIds.length !== 2);
   const showPartnerBadge =
     !!selectedPartner &&
     ((pathname === "/spin" && spinVideoPlayed && singerRevealed) ||
