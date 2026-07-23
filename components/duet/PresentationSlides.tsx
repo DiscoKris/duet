@@ -961,12 +961,12 @@ export function PresentationSlides({ slug }: { slug: string }) {
             <div className="relative w-full max-w-[34rem] overflow-hidden rounded-[2rem] border border-black/15 bg-black/12 shadow-[0_24px_60px_rgba(44,0,28,0.28)]">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),transparent_28%),linear-gradient(180deg,rgba(132,16,102,0.12),rgba(29,4,24,0.34))]" />
               <Image
-                src="/superstar.png"
+                src="/cowboysolo.png"
                 alt="Secret Superstar"
-                width={621}
-                height={713}
+                width={1824}
+                height={2314}
                 sizes="(max-width: 1024px) 92vw, 45vw"
-                className="h-[min(54svh,30rem)] w-full object-cover object-center"
+                className="h-[min(58svh,32rem)] w-full object-contain object-center"
               />
               <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(96,8,74,0.08),rgba(18,0,13,0.18))]" />
             </div>
@@ -1897,18 +1897,30 @@ export function PresentationSlides({ slug }: { slug: string }) {
         <div className="grid min-h-0 flex-1 content-center gap-[clamp(0.75rem,2svh,2rem)] sm:grid-cols-[0.95fr_1.05fr] sm:items-center sm:gap-8">
           <div className="flex justify-center sm:justify-start">
             <div className="relative w-full max-w-[36rem] overflow-hidden rounded-[2rem] border border-white/10 bg-black shadow-[0_0_70px_rgba(57,240,255,0.16)]">
-              <Image
-                key={superstarVisible ? "sia-reveal" : "cowboy-clue"}
-                src={superstarVisible ? "/Sia.png" : "/cowboy.png"}
-                alt={superstarVisible ? "Sia" : "A mystery superstar in silhouette"}
-                width={superstarVisible ? 1200 : 1920}
-                height={superstarVisible ? 1500 : 1080}
-                priority
-                sizes="(max-width: 1024px) 92vw, 46vw"
-                className={`h-[min(38svh,22rem)] w-full object-cover object-center transition-all duration-700 sm:h-[min(58svh,32rem)] ${
-                  superstarVisible ? "scale-100" : "scale-[1.01]"
-                }`}
-              />
+              {superstarVisible ? (
+                <Image
+                  key="sia-reveal"
+                  src="/Sia.png"
+                  alt="Sia"
+                  width={1200}
+                  height={1500}
+                  priority
+                  sizes="(max-width: 1024px) 92vw, 46vw"
+                  className="h-[min(38svh,22rem)] w-full scale-100 object-cover object-center transition-all duration-700 sm:h-[min(58svh,32rem)]"
+                />
+              ) : (
+                <video
+                  key="cowboy-clue"
+                  src="/cowboyreveal.mp4"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="auto"
+                  aria-label="A mystery superstar in silhouette"
+                  className="h-[min(38svh,22rem)] w-full scale-[1.01] object-cover object-[center_16%] transition-all duration-700 sm:h-[min(58svh,32rem)]"
+                />
+              )}
               <div
                 className={`pointer-events-none absolute inset-0 transition-all duration-700 ${
                   superstarVisible
@@ -2095,7 +2107,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
                   width={1121}
                   height={1403}
                   sizes="(max-width: 1024px) 92vw, 26rem"
-                  className="h-[min(28svh,15rem)] w-full rounded-[1.5rem] object-contain object-center"
+                  className="h-[min(35svh,19rem)] w-full rounded-[1.5rem] object-contain object-center"
                 />
               </div>
             </div>
@@ -2128,19 +2140,23 @@ export function PresentationSlides({ slug }: { slug: string }) {
               <h2 className="font-display text-[clamp(1.15rem,min(1.8vw,2.8svh),1.6rem)] uppercase leading-none tracking-[-0.03em] text-[var(--accent-pink)]">
                 KRIS LYTHGOE
               </h2>
-              <p className="mt-2 font-sans text-[clamp(0.78rem,min(1vw,1.55svh),0.95rem)] leading-[1.42] text-white/76">
-                Kris Lythgoe is a producer, writer, and format creator working across
-                network television, live entertainment, and large-scale family spectacle.
-                A former Warner Bros. television executive, Kris has developed and produced
-                projects across the U.S. and U.K., building shows around big emotion, broad
-                audience appeal, and undeniable live-event moments. His work has connected
-                him with major talent and creative teams across music, theatre, and
-                television, including Wayne Brady, Lulu, Nigel Lythgoe, Debbie Allen, Paula
-                Abdul, Derek Hough, Sabrina Carpenter, Kara DioGuardi, John Farrar, and
-                Sheldon Epps. Kris specializes in formats with heart, competition, celebrity
-                access, and theatrical scale — the kind of ideas built to travel from screen
-                to stage and back again.
-              </p>
+              <div className="mt-2 space-y-2 font-sans text-[clamp(0.78rem,min(1vw,1.55svh),0.95rem)] leading-[1.42] text-white/76">
+                <p>
+                  Kris Lythgoe is a producer, writer, and format creator whose work spans
+                  network television, live entertainment, and large-scale family spectacle.
+                  A former Warner Bros. television executive, Kris has built projects across
+                  the U.S. and U.K. around big emotion, broad audience appeal, celebrity
+                  access, and undeniable live-event moments.
+                </p>
+                <p>
+                  He has produced programming for ABC, FOX, NBC, and CBS, as well as numerous
+                  cable networks, and his work has connected him with major talent across
+                  music, theatre, and television, including Ariana Grande, Wayne Brady, Derek
+                  Hough, and Sabrina Carpenter. Kris specializes in formats with heart,
+                  competition, theatrical scale, and the kind of audience-first storytelling
+                  built to travel from screen to stage and back again.
+                </p>
+              </div>
             </article>
           </div>
         </div>
