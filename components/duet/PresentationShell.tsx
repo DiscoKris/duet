@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { findRouteByPath, presentationRoutes } from "@/data/presentationRoutes";
+import {
+  findRouteByPath,
+  visiblePresentationRoutes,
+} from "@/data/presentationRoutes";
 import { PersistentPartnerBadge } from "./PersistentPartnerBadge";
 import { usePresentation } from "./PresentationContext";
 
@@ -55,6 +58,10 @@ export function PresentationShell({
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const route = findRouteByPath(pathname);
+  const routeIndex = visiblePresentationRoutes.findIndex(
+    (presentationRoute) => presentationRoute.path === pathname,
+  );
+  const isVisibleRoute = routeIndex >= 0;
   const {
     selectedPartner,
     spinVideoPlayed,
@@ -75,20 +82,23 @@ export function PresentationShell({
       partnerBadgeRoutes.has(pathname));
 
   const prevRoute = useMemo(() => {
-    if (!route || route.index === 0) {
+    if (!isVisibleRoute || routeIndex === 0) {
       return null;
     }
 
-    return presentationRoutes[route.index - 1];
-  }, [route]);
+    return visiblePresentationRoutes[routeIndex - 1];
+  }, [isVisibleRoute, routeIndex]);
 
   const nextRoute = useMemo(() => {
-    if (!route || route.index === presentationRoutes.length - 1) {
+    if (
+      !isVisibleRoute ||
+      routeIndex === visiblePresentationRoutes.length - 1
+    ) {
       return null;
     }
 
-    return presentationRoutes[route.index + 1];
-  }, [route]);
+    return visiblePresentationRoutes[routeIndex + 1];
+  }, [isVisibleRoute, routeIndex]);
 
   const navigate = useCallback(
     (direction: "next" | "prev") => {
@@ -168,7 +178,7 @@ export function PresentationShell({
     return <>{children}</>;
   }
 
-  const progress = ((route.index + 1) / presentationRoutes.length) * 100;
+  const progress = ((routeIndex + 1) / visiblePresentationRoutes.length) * 100;
 
   return (
     <div className="relative h-[100svh] overflow-hidden bg-black text-white">
@@ -194,7 +204,7 @@ export function PresentationShell({
               Presentation Map
             </p>
             <div className="mt-6 grid gap-x-10 md:grid-cols-2">
-              {presentationRoutes.map((menuRoute, index) => (
+              {visiblePresentationRoutes.map((menuRoute, index) => (
                 <Link
                   key={menuRoute.path}
                   href={menuRoute.path}
@@ -218,17 +228,20 @@ export function PresentationShell({
         </div>
       ) : null}
 
-      <div className="fixed left-4 top-4 z-30 hidden items-center gap-3 md:flex">
-        <p className="font-sans text-[11px] uppercase tracking-[0.3em] text-white/55">
-          {String(route.index + 1).padStart(2, "0")} / {String(presentationRoutes.length).padStart(2, "0")}
-        </p>
-        <div className="h-px w-32 bg-white/15">
-          <div
-            className="h-px bg-[var(--accent-pink)] transition-[width] duration-500"
-            style={{ width: `${progress}%` }}
-          />
+      {isVisibleRoute ? (
+        <div className="fixed left-4 top-4 z-30 hidden items-center gap-3 md:flex">
+          <p className="font-sans text-[11px] uppercase tracking-[0.3em] text-white/55">
+            {String(routeIndex + 1).padStart(2, "0")} /{" "}
+            {String(visiblePresentationRoutes.length).padStart(2, "0")}
+          </p>
+          <div className="h-px w-32 bg-white/15">
+            <div
+              className="h-px bg-[var(--accent-pink)] transition-[width] duration-500"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
         </div>
-      </div>
+      ) : null}
 
       <div key={pathname} className="presentation-route-enter h-[100svh]">
         {children}

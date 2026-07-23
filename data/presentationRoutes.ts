@@ -5,6 +5,7 @@ export type PresentationRoute = {
   progressLabel: string;
   nextLabel?: string;
   previousLabel?: string;
+  hiddenFromSequence?: boolean;
 };
 
 export const presentationRoutes: PresentationRoute[] = [
@@ -91,7 +92,7 @@ export const presentationRoutes: PresentationRoute[] = [
     slug: "phase-two",
     menuLabel: "Phase Two",
     progressLabel: "The Wheel Turns Again",
-    nextLabel: "SPIN FOR YOUR OPPONENT",
+    nextLabel: "START THE DUEL",
   },
   {
     path: "/opponent-spin",
@@ -99,6 +100,7 @@ export const presentationRoutes: PresentationRoute[] = [
     menuLabel: "Opponent Spin",
     progressLabel: "Rival Duet",
     nextLabel: "SEE THE DUEL",
+    hiddenFromSequence: true,
   },
   {
     path: "/duel",
@@ -154,6 +156,13 @@ export const presentationRoutes: PresentationRoute[] = [
     slug: "host",
     menuLabel: "Host",
     progressLabel: "Host Vibes",
+    nextLabel: "WHY BBC?",
+  },
+  {
+    path: "/why-bbc",
+    slug: "why-bbc",
+    menuLabel: "Why BBC",
+    progressLabel: "Why BBC",
     nextLabel: "MEET THE CREATORS",
   },
   {
@@ -171,8 +180,12 @@ export const presentationRoutes: PresentationRoute[] = [
   },
 ];
 
+export const visiblePresentationRoutes = presentationRoutes.filter(
+  (route) => !route.hiddenFromSequence,
+);
+
 export const presentationRouteMap = new Map(
-  presentationRoutes.map((route, index) => [route.path, { ...route, index }]),
+  presentationRoutes.map((route) => [route.path, route]),
 );
 
 export function findRouteByPath(pathname: string) {

@@ -364,9 +364,9 @@ export const formatCopy = {
     win: [
       "YOU'VE WON",
       "DUET ROULETTE.",
+      "CLAIM THE SIGNING BONUS.",
       "RECORD THE SINGLE.",
       "RELEASE IT TO THE WORLD.",
-      "CLAIM THE SIGNING BONUS.",
       "TAKE YOUR PLACE IN THE SPOTLIGHT.",
     ],
   },
