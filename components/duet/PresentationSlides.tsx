@@ -1928,8 +1928,8 @@ export function PresentationSlides({ slug }: { slug: string }) {
   if (slug === "secret-superstar") {
     return (
       <PresentationPage className="justify-center">
-        <div className="grid flex-1 gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-          <div className="flex justify-center lg:justify-start">
+        <div className="grid min-h-0 flex-1 content-center gap-[clamp(0.75rem,2svh,2rem)] sm:grid-cols-[0.95fr_1.05fr] sm:items-center sm:gap-8">
+          <div className="flex justify-center sm:justify-start">
             <div className="relative w-full max-w-[36rem] overflow-hidden rounded-[2rem] border border-white/10 bg-black shadow-[0_0_70px_rgba(57,240,255,0.16)]">
               <Image
                 src="/sia.png"
@@ -1938,7 +1938,7 @@ export function PresentationSlides({ slug }: { slug: string }) {
                 height={1500}
                 priority
                 sizes="(max-width: 1024px) 92vw, 46vw"
-                className={`h-[min(58svh,32rem)] w-full object-cover object-center transition-all duration-700 ${
+                className={`h-[min(38svh,22rem)] w-full object-cover object-center transition-all duration-700 sm:h-[min(58svh,32rem)] ${
                   superstarVisible ? "scale-100 blur-0" : "scale-[1.03] blur-md"
                 }`}
               />
@@ -1956,30 +1956,38 @@ export function PresentationSlides({ slug }: { slug: string }) {
               />
             </div>
           </div>
-          <div>
-            <p className="font-sans text-xs uppercase tracking-[0.35em] text-white/50">
-              {formatCopy.superstar.prompt}
-            </p>
-            <p className="mt-5 font-display text-[clamp(4rem,10vw,8rem)] uppercase leading-none tracking-[-0.06em] text-[var(--accent-pink)]">
-              {superstarVisible ? formatCopy.superstar.name : "..."}
-            </p>
+          <div className="min-h-0">
             {!superstarVisible ? (
-              <button
-                type="button"
-                onClick={() => setSuperstarVisible(true)}
-                className="mt-6 inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/5 px-5 py-3 font-sans text-sm uppercase tracking-[0.24em] text-white transition-colors hover:border-[var(--accent-pink)] hover:text-[var(--accent-pink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-pink)]"
-              >
-                REVEAL
-                <span>&rarr;</span>
-              </button>
+              <>
+                <p className="font-sans text-xs font-semibold uppercase tracking-[0.35em] text-[var(--accent-pink)]">
+                  FINAL CLUE
+                </p>
+                <p className="mt-[clamp(0.6rem,1.5svh,1rem)] max-w-3xl font-display text-[clamp(2.25rem,min(5.4vw,6.8svh),4.75rem)] uppercase leading-[0.88] tracking-[-0.05em] text-white">
+                  STRONGER THAN DIAMONDS &amp; TITANIUM COMBINED.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setSuperstarVisible(true)}
+                  className="mt-[clamp(1rem,2.5svh,1.5rem)] inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/5 px-5 py-3 font-sans text-sm uppercase tracking-[0.24em] text-white transition-colors hover:border-[var(--accent-pink)] hover:text-[var(--accent-pink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-pink)]"
+                >
+                  REVEAL
+                  <span>&rarr;</span>
+                </button>
+              </>
             ) : (
               <>
-                <p className="mt-8 font-display text-3xl uppercase leading-none tracking-[-0.05em] text-white">
+                <p className="font-sans text-xs uppercase tracking-[0.35em] text-white/50">
+                  {formatCopy.superstar.prompt}
+                </p>
+                <p className="mt-[clamp(0.75rem,2.5svh,1.25rem)] font-display text-[clamp(4rem,10vw,8rem)] uppercase leading-none tracking-[-0.06em] text-[var(--accent-pink)]">
+                  {formatCopy.superstar.name}
+                </p>
+                <p className="mt-[clamp(0.75rem,4svh,2rem)] font-display text-3xl uppercase leading-none tracking-[-0.05em] text-white">
                   {formatCopy.superstar.question}
                 </p>
                 <ArrowButton
                   onClick={() => router.push("/the-final?stage=showdown")}
-                  className="mt-8"
+                  className="mt-[clamp(0.75rem,4svh,2rem)]"
                 >
                   FIND OUT
                 </ArrowButton>
